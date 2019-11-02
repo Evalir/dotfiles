@@ -1,0 +1,85 @@
+{
+  "window.zoomLevel": -1,
+  "window.titleBarStyle": "custom",
+  "editor.fontSize": 15,
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "eslint.autoFixOnSave": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    {
+      "language": "typescript",
+      "autoFix": true
+    },
+    {
+      "language": "typescriptreact",
+      "autoFix": true
+    }
+  ],
+  "eslint.run": "onSave",
+  "eslint.alwaysShowStatus": true,
+  "prettier.disableLanguages": ["js"], //uncomment on react app
+  "files.autoSave": "onFocusChange",
+  "prettier.trailingComma": "all",
+  "prettier.singleQuote": true,
+  "terminal.integrated.fontSize": 14,
+  "prettier.jsxBracketSameLine": true,
+  "editor.tabSize": 2,
+  "workbench.colorCustomizations": {
+    "activityBarBadge.background": "#00BCD4",
+    "list.activeSelectionForeground": "#00BCD4",
+    "list.inactiveSelectionForeground": "#00BCD4",
+    "list.highlightForeground": "#00BCD4",
+    "scrollbarSlider.activeBackground": "#00BCD450",
+    "editorSuggestWidget.highlightForeground": "#00BCD4",
+    "textLink.foreground": "#00BCD4",
+    "progressBar.background": "#00BCD4",
+    "pickerGroup.foreground": "#00BCD4",
+    "tab.activeBorder": "#00BCD4",
+    "notificationLink.foreground": "#00BCD4",
+    "editorWidget.resizeBorder": "#00BCD4",
+    "editorWidget.border": "#00BCD4",
+    "settings.modifiedItemIndicator": "#00BCD4",
+    "settings.headerForeground": "#00BCD4",
+    "panelTitle.activeBorder": "#00BCD4",
+    "breadcrumb.activeSelectionForeground": "#00BCD4",
+    "menu.selectionForeground": "#00BCD4",
+    "menubar.selectionForeground": "#00BCD4",
+    // "editor.background": "#20232A",
+    "[New Ocean]": {
+      "titleBar.activeBackground": "#122027",
+      "titleBar.activeForeground": "#CED4DA"
+    }
+  },
+  "materialTheme.accent": "Cyan",
+  "editor.wordWrap": "on",
+  "workbench.colorTheme": "Over Night Owl",
+  "editor.fontLigatures": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "terminal.integrated.rendererType": "dom",
+  "prettier.eslintIntegration": true,
+  "python.dataScience.sendSelectionToInteractiveWindow": false,
+  "editor.fontFamily": "Dank Mono, Operator Mono, Consolas, Menlo, Monaco, 'Courier New', monospace",
+  "font-switcher.fontFamily": "Dank Mono, Operator Mono, Consolas, Menlo, Monaco",
+  "workbench.iconTheme": "material-icon-theme",
+  "python.formatting.provider": "black",
+  "python.autoComplete.addBrackets": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.pep8Enabled": true,
+  "editor.lineHeight": 30,
+  "editor.fontWeight": "300",
+  "typescript.updateImportsOnFileMove.enabled": "never"
+}
