@@ -10,8 +10,12 @@ set expandtab
 " cuz in js and html, 2 spaces yo'
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 autocmd FileType html       setlocal shiftwidth=2 tabstop=2
+
 " dem plugins
 call plug#begin('~/.vim/plugged')
+" statusline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 " gotta pretty up dem codez
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
@@ -21,12 +25,15 @@ Plug 'sjl/badwolf'
 Plug 'haishanh/night-owl.vim'
 Plug 'micha/vim-colors-solarized'
 Plug 'crusoexia/vim-monokai'
+Plug 'mhartington/oceanic-next'
 Plug 'othree/yajs.vim'
 Plug 'pangloss/vim-javascript'
-" jsx
+" jsx / frontend setup stuff
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-Plug 'mhartington/oceanic-next'
+
+" python linter setup
+Plug 'psf/black'
 call plug#end()
 " gotta see them colors
 syntax enable
@@ -39,5 +46,4 @@ syntax enable
  endif
 
 set termguicolors
-colorscheme monokai
-
+colorscheme dim
