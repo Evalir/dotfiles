@@ -11,7 +11,8 @@ set expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 autocmd FileType html       setlocal shiftwidth=2 tabstop=2
 " set font
-set guifont=SF\ Mono:h13
+" Need to have this installed locally to work
+set guifont=MesloLGS\ Nerd\ Font:h13
 " dem plugins
 call plug#begin('~/.vim/plugged')
 " statusline
@@ -38,7 +39,8 @@ Plug 'ryanoasis/vim-devicons'
 " Show dotfiles
 let NERDTreeShowHidden=1
 " Completion
-Plug 'valloric/youcompleteme'
+" Plug 'valloric/youcompleteme'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " ALE for ESLint
 Plug 'dense-analysis/ale'
 let g:ale_fix_on_save=1
@@ -77,4 +79,4 @@ syntax enable
  endif
 
 set termguicolors
-colorscheme OceanicNext
+colorscheme night-owl
