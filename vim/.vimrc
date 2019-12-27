@@ -10,7 +10,8 @@ set expandtab
 " cuz in js and html, 2 spaces yo'
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 autocmd FileType html       setlocal shiftwidth=2 tabstop=2
-
+" set font
+set guifont=SF\ Mono:h13
 " dem plugins
 call plug#begin('~/.vim/plugged')
 " statusline
@@ -32,9 +33,24 @@ Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree'
 " Open automatically
 autocmd vimenter * NERDTree
+" Icons
+Plug 'ryanoasis/vim-devicons'
 " Show dotfiles
 let NERDTreeShowHidden=1
+" Completion
+Plug 'valloric/youcompleteme'
+" ALE for ESLint
+Plug 'dense-analysis/ale'
+let g:ale_fix_on_save=1
+" Finder
+" Will use both until I prefer one
+" Note: Also remember to install fzf / ripgrep locally
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'jremmen/vim-ripgrep'
 " dem colors
+Plug 'jaredgorski/spacecamp'
 Plug 'sjl/badwolf'
 Plug 'haishanh/night-owl.vim'
 Plug 'micha/vim-colors-solarized'
@@ -61,4 +77,4 @@ syntax enable
  endif
 
 set termguicolors
-colorscheme dim
+colorscheme OceanicNext
