@@ -16,10 +16,24 @@ call plug#begin('~/.vim/plugged')
 " statusline
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-" gotta pretty up dem codez
+" dev tools
+" prettier
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
+" Auto pair (bracket matching)
+Plug 'jiangmiao/auto-pairs'
+" NERD Commenter for line / multiline commenting
+Plug 'scrooloose/nerdcommenter'
+let g:NERDSpaceDelims=1 " always insert spaces after commenting
+" Gitgutter to show changes
+Plug 'airblade/vim-gitgutter'
+" File system explorer
+Plug 'scrooloose/nerdtree'
+" Open automatically
+autocmd vimenter * NERDTree
+" Show dotfiles
+let NERDTreeShowHidden=1
 " dem colors
 Plug 'sjl/badwolf'
 Plug 'haishanh/night-owl.vim'
@@ -28,6 +42,7 @@ Plug 'crusoexia/vim-monokai'
 Plug 'mhartington/oceanic-next'
 Plug 'othree/yajs.vim'
 Plug 'pangloss/vim-javascript'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 " jsx / frontend setup stuff
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
