@@ -11,7 +11,6 @@ set expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 autocmd FileType html       setlocal shiftwidth=2 tabstop=2
 " set font
-" Need to have this installed locally to work
 set guifont=MesloLGS\ Nerd\ Font:h13
 " dem plugins
 call plug#begin('~/.vim/plugged')
@@ -19,7 +18,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " dev tools
-" prettier
+" solidity
+Plug 'tomlion/vim-solidity'
+"  prettier
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
