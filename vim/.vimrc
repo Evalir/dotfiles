@@ -10,10 +10,9 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'jremmen/vim-ripgrep'
 Plug 'scrooloose/nerdtree'
-autocmd vimenter * NERDTree
+let NERDTreeShowHidden=1
 Plug 'liuchengxu/vista.vim'
 Plug 'ryanoasis/vim-devicons'
-let NERDTreeShowHidden=1
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
   \ 'coc-snippets',
@@ -23,8 +22,8 @@ let g:coc_global_extensions = [
   \ 'coc-json', 
   \ ]
 " devtools / dev setup
-Plug 'fatih/vim-go', { 'do': ':GopdateBinaries' }
-Plug 'rust-lang/rust.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'rustlang/rust.vim'
 Plug 'tomlion/vim-solidity'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
@@ -37,6 +36,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 " colorschemes
+Plug 'chriskempson/base16-vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'liuchengxu/space-vim-theme'
 Plug 'jaredgorski/spacecamp'
@@ -49,9 +49,10 @@ Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 call plug#end()
 
 set number
-set tabstop=2
-set softtabstop=2
-set expandtab
+set tabstop=2 " tab width = 4, (only interpretation)
+set softtabstop=2 " useful for python, for example
+set shiftwidth=2 " indents -> width 4
+set expandtab "expand tab to space
 set guifont=MesloLGS\ Nerd\ Font:h13
 set hlsearch
 syntax enable
@@ -63,8 +64,33 @@ set t_Co=256
  endif
 
 set termguicolors
-colorscheme OceanicNext 
+colorscheme base16-tomorrow-night 
+" File types handling
+" Enable filetype detection:
+filetype on
 filetype plugin on
+filetype indent on " file type based indentation
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType css setlocal shiftwidth=2 tabstop=2 expandtab
+
+" remap F2 to nerdtreetoggle (thx brett)
+nnoremap <F2> :NERDTreeToggle<cr>
+" also map ctrl b (vscode)
+nmap <C-B> :NERDTreeToggle <space>
+" map ctrl f to fzf (finder)
+nmap <C-F> :FZF<space>
+" map ctrl s to find ocurrences
+nmap <C-S> :Rg<space>
+" Set textwidth at 100
+set textwidth=100
+
+augroup custom_filetypes
+    au!
+    au BufRead,BufNewFile *.jsx setlocal filetype=javascript
+    au BufRead,BufNewFile *.jsonld setlocal filetype=json
+    au BufRead,BufNewFile *.cshtml setlocal filetype=html
+    au BufRead,BufNewFile *.cshtml_ setlocal filetype=html
+    au BufRead,BufNewFile *.scss setlocal filetype=css
+    au BufRead,BufNewFile *.md setlocal filetype=markdown
+augroup END
