@@ -9,6 +9,7 @@ Plug 'jiangmiao/auto-pairs'
 " let g:seiya_target_groups = has('nvim') ? ['guibg'] : ['ctermbg']
 Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims=1 " always insert spaces after commenting
+Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -20,12 +21,14 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 let g:coc_global_extensions = [
   \ 'coc-snippets',
-  \ 'coc-tsserve',
+  \ 'coc-tsserver',
   \ 'coc-eslint',
   \ 'coc-prettier',
   \ 'coc-json', 
   \ ]
 " devtools / dev setup
+Plug 'luochen1990/rainbow'
+let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
@@ -36,11 +39,12 @@ Plug 'gorodinskiy/vim-coloresque'
 Plug 'psf/black'
 Plug 'dense-analysis/ale'
 let g:ale_fix_on_save=1
-Plug 'othree/yajs.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 " colorschemes
+Plug 'herrbischoff/cobalt2.vim'
+Plug 'morhetz/gruvbox'
 Plug 'kaicataldo/material.vim'
 Plug 'whatyouhide/vim-gotham'
 Plug 'jeffkreeftmeijer/vim-dim'
@@ -56,7 +60,7 @@ Plug 'mhartington/oceanic-next'
 Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 call plug#end()
 
-:set guicursor=a:blinkon100
+" :set guicursor=a:blinkon100
 
 set number
 set tabstop=2 " tab width = 4, (only interpretation)
@@ -65,15 +69,9 @@ set shiftwidth=2 " indents -> width 4
 set expandtab "expand tab to space
 set guifont=SF\ Mono\ Nerd\ Font:h14
 set hlsearch
-set cursorline
-set autoread
-set mouse=i
-" S for saving
-noremap S :update<CR>
-" Q for leaving
-noremap Q :q<CR>
-" Make exiting to normal mode a bit easier
-imap <leader><leader> <Esc>
+" set cursorline
+" set autoread
+" set mouse=i
 syntax enable
 " for vim 7
 set t_Co=256
@@ -83,7 +81,7 @@ set t_Co=256
  endif
 
 set termguicolors
-colorscheme material
+colorscheme OceanicNext 
 " File types handling
 " Enable filetype detection:
 filetype on
