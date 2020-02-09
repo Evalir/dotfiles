@@ -48,6 +48,8 @@ brew install rustup
 rustup-init
 
 # utilities
+# nice prompt -> starship
+brew install starship #need to set eval "$(starship init zsh)" after on zshrc
 # heroku
 brew install heroku/brew/heroku
 heroku upgrade
