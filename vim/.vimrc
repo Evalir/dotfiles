@@ -29,6 +29,9 @@ let g:coc_global_extensions = [
 " devtools / dev setup
 Plug 'luochen1990/rainbow'
 let g:rainbow_active = 1 " also :RainbowToggle
+Plug 'APZelos/blamer.nvim'
+let g:blamer_enabled = 1
+let g:blamer_delay = 500
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
@@ -43,6 +46,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 " colorschemes
+Plug 'cormacrelf/vim-colors-github'
 Plug 'Brettm12345/moonlight.vim'
 Plug 'sheerun/vim-wombat-scheme'
 Plug 'ntk148v/vim-horizon'
@@ -81,14 +85,12 @@ if (has("nvim"))
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 endif
 
-"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+" Enable 256 on neovim
 if (has("termguicolors"))
   set termguicolors
 endif
 set termguicolors
-colorscheme flattened_dark 
+colorscheme gruvbox 
 " File types handling
 " Enable filetype detection:
 filetype on
@@ -117,4 +119,3 @@ augroup custom_filetypes
     au BufRead,BufNewFile *.scss setlocal filetype=css
     au BufRead,BufNewFile *.md setlocal filetype=markdown
 augroup END
-
