@@ -1,5 +1,5 @@
 call plug#begin('~/.vim/plugged')
-" vim plugs
+" vim plugins
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme="deus"
@@ -19,7 +19,9 @@ let NERDTreeShowHidden=1
 Plug 'liuchengxu/vista.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = [
+" scratchpad
+Plug 'metakirby5/codi.vim'
+et g:coc_global_extensions = [
   \ 'coc-snippets',
   \ 'coc-tsserver',
   \ 'coc-eslint',
@@ -46,6 +48,12 @@ Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 " colorschemes
+Plug 'rakr/vim-two-firewatch'
+Plug 'vim-scripts/Zenburn'
+Plug 'arzg/vim-colors-xcode'
+Plug 'ayu-theme/ayu-vim'
+Plug 'rakr/vim-one'
+Plug 'mhartington/oceanic-next'
 Plug 'cormacrelf/vim-colors-github'
 Plug 'Brettm12345/moonlight.vim'
 Plug 'sheerun/vim-wombat-scheme'
@@ -55,6 +63,7 @@ Plug 'morhetz/gruvbox'
 Plug 'kaicataldo/material.vim'
 Plug 'whatyouhide/vim-gotham'
 Plug 'jeffkreeftmeijer/vim-dim'
+Plug 'chriskempson/base16-vim'
 " Plug 'chriskempson/base16-vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'liuchengxu/space-vim-theme'
@@ -85,12 +94,17 @@ if (has("nvim"))
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 endif
 
-" Enable 256 on neovim
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
 if (has("termguicolors"))
   set termguicolors
 endif
 set termguicolors
-colorscheme gruvbox 
+colorscheme base16-snazzy
+" Different colorscheme for solidity & python
+" autocmd FileType solidity colorscheme two-firewatch
+" autocmd FileType javascript colorscheme xcodewwdc
 " File types handling
 " Enable filetype detection:
 filetype on
@@ -119,3 +133,4 @@ augroup custom_filetypes
     au BufRead,BufNewFile *.scss setlocal filetype=css
     au BufRead,BufNewFile *.md setlocal filetype=markdown
 augroup END
+
