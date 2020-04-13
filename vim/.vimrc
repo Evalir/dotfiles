@@ -10,6 +10,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims=1 " always insert spaces after commenting
 Plug 'tpope/vim-fugitive'
+Plug 'myusuf3/numbers.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -19,35 +20,60 @@ let NERDTreeShowHidden=1
 Plug 'liuchengxu/vista.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'ntpeters/vim-better-whitespace'
 " scratchpad
 Plug 'metakirby5/codi.vim'
-et g:coc_global_extensions = [
+let g:coc_global_extensions = [
   \ 'coc-snippets',
   \ 'coc-tsserver',
   \ 'coc-eslint',
   \ 'coc-prettier',
-  \ 'coc-json', 
+  \ 'coc-json',
   \ ]
 " devtools / dev setup
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-rails'
 Plug 'luochen1990/rainbow'
+
+Plug 'vim-syntastic/syntastic'
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+
+
 let g:rainbow_active = 1 " also :RainbowToggle
 Plug 'APZelos/blamer.nvim'
 let g:blamer_enabled = 1
 let g:blamer_delay = 500
+Plug 'mustache/vim-mustache-handlebars'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'solidity', 'php', 'swift', 'python', 'ruby'] }
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'solidity', 'php', 'swift', 'python'] }
 Plug 'gorodinskiy/vim-coloresque'
 Plug 'psf/black'
 Plug 'dense-analysis/ale'
-let g:ale_fix_on_save=1
+let g:ale_linters = {'ruby': ['rubocop']}
+let g:ale_fixers = {'ruby': ['rubocop'], '*': ['remove_trailing_lines', 'trim_whitespace']}
+let g:ale_fix_on_save = 1
+let g:ruby_indent_assignment_style = 'variable'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 " colorschemes
+Plug 'Nequo/vim-allomancer'
+Plug 'https://gitlab.com/protesilaos/tempus-themes-vim.git'
+Plug 'victorze/foo'
+Plug 'arcticicestudio/nord-vim'
+Plug 'chriskempson/base16-vim'
 Plug 'rakr/vim-two-firewatch'
 Plug 'vim-scripts/Zenburn'
 Plug 'arzg/vim-colors-xcode'
@@ -85,6 +111,8 @@ set shiftwidth=2 " indents -> width 4
 set expandtab "expand tab to space
 set guifont=SF\ Mono\ Nerd\ Font:h14
 set hlsearch
+set clipboard=unnamed
+set mouse=a
 " set cursorline
 " set autoread
 " set mouse=i
@@ -97,11 +125,12 @@ endif
 "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
 "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
 " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-if (has("termguicolors"))
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
 endif
-set termguicolors
-colorscheme base16-snazzy
+colorscheme nord
 " Different colorscheme for solidity & python
 " autocmd FileType solidity colorscheme two-firewatch
 " autocmd FileType javascript colorscheme xcodewwdc
@@ -133,4 +162,3 @@ augroup custom_filetypes
     au BufRead,BufNewFile *.scss setlocal filetype=css
     au BufRead,BufNewFile *.md setlocal filetype=markdown
 augroup END
-
