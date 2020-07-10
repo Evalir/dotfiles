@@ -138,6 +138,7 @@ alias vi="nvim"
 alias v="nvim"
 alias dog="cat"
 alias yolo="echo 'banda de camion🚛';git push -f"
+alias dotfiles="cd ~/Dev/dotfiles && v"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
