@@ -2,6 +2,9 @@ call plug#begin('~/.vim/plugged')
 " vim plugins
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims=1 " always insert spaces after commenting
@@ -255,7 +258,7 @@ set ignorecase
 set smartcase
 " Show invisibles
 set list
-set listchars=tab:¬ª-,trail:¬∑
+set listchars=tab:»-,trail:·
 
 "----- SYNTAX CONFIG ------
 
@@ -283,7 +286,14 @@ autocmd FileType css setlocal shiftwidth=2 tabstop=2 expandtab
 
 "----- KEYBIND REMAP CONFIG ------
 
-
+" Fast :nohls
+nmap <leader>no :nohls<cr>
+" See buffer list
+nmap <C-m> :Buffers<space><cr>
+" As in gt for go to next tab, gb for go to next
+nmap gb :bnext<cr>
+" Close buffers easil by doing leader db
+nmap <leader>db :bd<cr>
 " remap F2 to nerdtreetoggle (thx brett)
 nnoremap <F2> :NERDTreeToggle<cr>
 " also map ctrl b (vscode)
