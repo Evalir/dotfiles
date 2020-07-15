@@ -5,6 +5,13 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  # source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
@@ -109,11 +116,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -126,19 +133,24 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
-alias zshconfig="nvim ~/.zshrc"
-alias nvimconfig="echo to be made"
 alias aragon="cd ~/Dev/Work/Aragon"
-alias hive="cd ~/Dev/Work/Hive"
-alias gti="echo '🚗  vroom vroom';git"
-alias psuh="push"
-alias order66="echo 'hablamo nunca🔪';killall node"
-alias vim="nvim"
-alias vi="nvim"
-alias v="nvim"
 alias dog="cat"
-alias yolo="echo 'banda de camion🚛';git push -f"
 alias dotfiles="cd ~/Dev/dotfiles && v"
+alias glog="git --no-pager log --oneline -20"
+alias gpl="git fetch && git pull"
+alias gti="echo '🚗  vroom vroom';git"
+alias gts="echo '🔬🔬';git status"
+alias hive="cd ~/Dev/Work/Hive"
+alias nvc="nvim ~/.config/nvim/init.vim"
+alias order66="echo 'hablamo nunca🔪';killall node"
+alias psuh="push"
+alias tax="tmux attach"
+alias tcf="nvim ~/.tmux.conf"
+alias v="nvim"
+alias vi="nvim"
+alias vim="nvim"
+alias yolo="echo 'banda de camion🚛';git push -f"
+alias zsc="nvim ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
