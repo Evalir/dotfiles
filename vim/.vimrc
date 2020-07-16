@@ -256,9 +256,11 @@ set mouse=a
 set ignorecase
 " but, if we type a cap letter, don't
 set smartcase
-" Show invisibles
+
+" Taken from https://github.com/bpierre/dotfiles/blob/master/vimrc#L185
+" Invisible characters, ˆ la TextMate
+set listchars=nbsp:·,tab:¿\ ,eol:¬
 set list
-set listchars=tab:Â»-,trail:Â·
 
 "----- SYNTAX CONFIG ------
 
@@ -273,7 +275,7 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
-colorscheme one
+colorscheme space-vim-dark
 
 filetype on
 filetype plugin on
