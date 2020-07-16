@@ -4,6 +4,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme='dracula'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
@@ -228,6 +229,7 @@ Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'liuchengxu/space-vim-theme'
 Plug 'jacoborus/tender.vim'
 Plug 'liuchengxu/space-vim-dark'
 Plug 'joshdick/onedark.vim'
@@ -252,6 +254,8 @@ set expandtab "expand tab to space
 set hlsearch
 set clipboard=unnamed
 set mouse=a
+" highlight line you're on
+set cursorline
 " ignore case when typing
 set ignorecase
 " but, if we type a cap letter, don't
@@ -259,23 +263,15 @@ set smartcase
 
 " Taken from https://github.com/bpierre/dotfiles/blob/master/vimrc#L185
 " Invisible characters, ˆ la TextMate
-set listchars=nbsp:·,tab:¿\ ,eol:¬
+set listchars=nbsp:Â·,tab:â–¸\ ,eol:Â¬
 set list
 
 "----- SYNTAX CONFIG ------
 
-syntax enable
-if (has("nvim"))
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
+set termguicolors
 
-if exists('+termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
-endif
-
-colorscheme space-vim-dark
+let g:space_vim_dark_background = 234
+color space_vim_theme
 
 filetype on
 filetype plugin on
