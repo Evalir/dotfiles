@@ -4,8 +4,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='dracula'
-
+let g:airline_theme='one'
+Plug 'mattn/emmet-vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims=1 " always insert spaces after commenting
@@ -229,19 +229,18 @@ Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'w0ng/vim-hybrid'
+Plug 'morhetz/gruvbox'
+Plug 'arcticicestudio/nord-vim'
+Plug 'chuling/equinusocio-material.vim'
 Plug 'liuchengxu/space-vim-theme'
-Plug 'jacoborus/tender.vim'
 Plug 'liuchengxu/space-vim-dark'
 Plug 'joshdick/onedark.vim'
-Plug 'drewtempelmeyer/palenight.vim'
-Plug 'rakr/vim-two-firewatch'
-Plug 'cocopon/iceberg.vim'
 Plug 'rakr/vim-one'
 Plug 'chriskempson/base16-vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'haishanh/night-owl.vim'
 Plug 'crusoexia/vim-monokai'
-Plug 'mhartington/oceanic-next'
 call plug#end()
 
 "----- GENERAL CONFIG ------
@@ -270,8 +269,13 @@ set list
 
 set termguicolors
 
+" Space vim config
 let g:space_vim_dark_background = 234
-color space_vim_theme
+" Gruvbox config
+let g:gruvbox_contrast_dark = 'dark'
+
+" ACTUAL COLOR SCHEME
+color nord
 
 filetype on
 filetype plugin on
@@ -286,14 +290,10 @@ autocmd FileType css setlocal shiftwidth=2 tabstop=2 expandtab
 
 " Fast :nohls
 nmap <leader>no :nohls<cr>
-" See buffer list
-nmap <C-m> :Buffers<space><cr>
 " As in gt for go to next tab, gb for go to next
 nmap gb :bnext<cr>
 " Close buffers easil by doing leader db
 nmap <leader>db :bd<cr>
-" remap F2 to nerdtreetoggle (thx brett)
-nnoremap <F2> :NERDTreeToggle<cr>
 " also map ctrl b (vscode)
 nmap <C-B> :NERDTreeToggle <space><cr>
 " map ctrl f to fzf (finder), respecting gitignore and making it fast af
