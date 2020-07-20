@@ -2,7 +2,7 @@
 
 # Any items in the `env` entry below will be added as
 # environment variables. Some entries may override variables
-# set by alacritty it self.
+# set by alacritty itself.
 # Font configuration (changes require restart)
 font:
   # The normal (roman) font face to use.
