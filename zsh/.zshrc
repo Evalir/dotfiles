@@ -1,17 +1,3 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  # source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
-
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
@@ -133,14 +119,19 @@ fi
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
-alias aragon="cd ~/Dev/Work/Aragon"
+alias ara="cd ~/Dev/Work/Aragon"
 alias dog="cat"
 alias dotfiles="cd ~/Dev/dotfiles && v"
+alias gclone="git clone"
+alias gp="git push"
+alias gpu="echo'🎉';git push -u"
+alias gt="git"
 alias glog="git --no-pager log --oneline -20"
 alias gpl="git fetch && git pull"
 alias gti="echo '🚗  vroom vroom';git"
 alias gts="echo '🔬🔬';git status"
 alias hive="cd ~/Dev/Work/Hive"
+alias nv="nvim"
 alias nvc="nvim ~/.config/nvim/init.vim"
 alias order66="echo 'hablamo nunca🔪';killall node"
 alias psuh="push"
@@ -166,7 +157,4 @@ export PATH="$PATH:$HOME/.rvm/bin"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(starship init zsh)"
-source ~/powerlevel10k/powerlevel10k.zsh-theme
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

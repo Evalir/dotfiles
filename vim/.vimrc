@@ -2,9 +2,24 @@ call plug#begin('~/.vim/plugged')
 " vim plugins
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='one'
+let g:airline_theme='gruvbox'
+
+let g:airline#extensions#tabline#tab_min_count = 2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#show_splits = 0
+let g:airline#extensions#tabline#show_tabs = 1
+let g:airline#extensions#tabline#show_tab_nr = 0
+let g:airline#extensions#tabline#show_tab_type = 0
+let g:airline#extensions#tabline#show_close_button = 0
+
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+
+Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'mattn/emmet-vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'scrooloose/nerdcommenter'
@@ -18,7 +33,6 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'scrooloose/nerdtree'
 let NERDTreeShowHidden=1
 Plug 'ntpeters/vim-better-whitespace'
-
 " devtools / dev setup
 " -------- coc.vim setup ---------
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -27,6 +41,11 @@ let g:coc_global_extensions = [
   \ 'coc-html',
   \ 'coc-css',
   \ 'coc-sh',
+  \ 'coc-reason',
+  \ 'coc-prettier',
+  \ 'coc-eslint',
+  \ 'coc-go',
+  \ 'coc-rls'
   \ ]
 
 " COC INITIAL SETUP
@@ -88,7 +107,7 @@ function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   else
-    call CocAction('doHover')
+    call CocActionAsync('doHover')
   endif
 endfunction
 
@@ -168,15 +187,6 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-" Check if we have prettier & eslint
-if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
-  let g:coc_global_extensions += ['coc-prettier']
-endif
-
-if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
-  let g:coc_global_extensions += ['coc-eslint']
-endif
-
 " Taken from https://thoughtbot.com/blog/modern-typescript-and-react-development-in-vim
 " Shows the diagnostic if any, and fallback to the documentation
 function! ShowDocIfNoDiagnostic(timer_id)
@@ -202,6 +212,8 @@ nnoremap <silent> <space>s :<C-u>CocList -I symbols<cr>
 " Remap fix by coc to do
 nmap <leader>do <Plug>(coc-codeaction)
 
+Plug 'vlime/vlime', {'rtp': 'vim/'}
+Plug 'reasonml-editor/vim-reason-plus'
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'luochen1990/rainbow'
@@ -212,12 +224,12 @@ let g:blamer_delay = 100
 let g:blamer_show_in_visual_modes = 0
 Plug 'sheerun/vim-polyglot'
 Plug 'mustache/vim-mustache-handlebars'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'solidity', 'php', 'swift', 'python'] }
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'solidity', 'php', 'swift', 'python', 'reason'] }
 Plug 'gorodinskiy/vim-coloresque'
 Plug 'psf/black'
 Plug 'pangloss/vim-javascript'
@@ -229,6 +241,11 @@ Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+Plug 'jpo/vim-railscasts-theme'
+Plug 'doums/darcula'
+Plug 'yuttie/hydrangea-vim'
+Plug 'ayu-theme/ayu-vim'
 Plug 'w0ng/vim-hybrid'
 Plug 'morhetz/gruvbox'
 Plug 'arcticicestudio/nord-vim'
@@ -246,8 +263,8 @@ call plug#end()
 "----- GENERAL CONFIG ------
 
 set number
-set tabstop=1 " tab width = 4, (only interpretation)
-set softtabstop=2 " useful for python, for example
+set tabstop=4 " tab width = 4, (only interpretation)
+set softtabstop=4 " useful for python, for example
 set shiftwidth=2 " indents -> width 4
 set expandtab "expand tab to space
 set hlsearch
@@ -259,12 +276,11 @@ set cursorline
 set ignorecase
 " but, if we type a cap letter, don't
 set smartcase
+" Set encoding format to a sensible default
+set encoding=utf-8
 
-" Taken from https://github.com/bpierre/dotfiles/blob/master/vimrc#L185
-" Invisible characters, � la TextMate
-set listchars=nbsp:·,tab:▸\ ,eol:¬
-set list
-
+" No auto folding
+set nofoldenable
 "----- SYNTAX CONFIG ------
 
 set termguicolors
@@ -273,14 +289,17 @@ set termguicolors
 let g:space_vim_dark_background = 234
 " Gruvbox config
 let g:gruvbox_contrast_dark = 'dark'
+" Ayu config
+let ayucolor = 'mirage'
 
 " ACTUAL COLOR SCHEME
-color nord
+color gruvbox
 
 filetype on
 filetype plugin on
 filetype indent on " file type based indentation
 
+autocmd FileType go setlocal shiftwidth=4 tabstop=4 expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType css setlocal shiftwidth=2 tabstop=2 expandtab
@@ -300,6 +319,9 @@ nmap <C-B> :NERDTreeToggle <space><cr>
 nnoremap <expr> <C-f> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
 " map ctrl s to find ocurrences (ripgrep)
 nmap <C-S> :Rg<space>
+" map Rustfmt to <leader>rf
+nmap <leader>rf :RustFmt<cr>
+let g:rustfmt_autosave = 1
 " Set textwidth at 100
 set textwidth=100
 
