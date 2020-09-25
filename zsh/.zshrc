@@ -15,6 +15,15 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 # thefuck
 eval $(thefuck --alias)
 
+# ANTIGEN
+# Make sure you have this installed before sourcing this zsh.
+# Use the cUrl comman; I have no idea how to use brew for this 🤷
+source ~/antigen.zsh
+
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle 'wfxr/forgit'
+
+antigen apply
 
 # Completion style
 zstyle ':completion:*' menu select
@@ -87,7 +96,6 @@ setopt HIST_BEEP
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git
   zsh-syntax-highlighting
   zsh-autosuggestions
 )
@@ -100,13 +108,6 @@ source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -125,8 +126,6 @@ alias dotfiles="cd ~/Dev/dotfiles && v"
 alias gclone="git clone"
 alias gp="git push"
 alias gpu="echo'🎉';git push -u"
-alias gt="git"
-alias glog="git --no-pager log --oneline -20"
 alias gpl="git fetch && git pull"
 alias gti="echo '🚗  vroom vroom';git"
 alias gts="echo '🔬🔬';git status"

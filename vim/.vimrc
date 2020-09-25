@@ -5,7 +5,7 @@ Plug 'vim-airline/vim-airline-themes'
 
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='gruvbox'
+let g:airline_theme='base16'
 
 let g:airline#extensions#tabline#tab_min_count = 2
 let g:airline#extensions#tabline#enabled = 1
@@ -19,6 +19,7 @@ let g:airline#extensions#tabline#show_close_button = 0
 let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 
+Plug 'chrisbra/unicode.vim'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'mattn/emmet-vim'
 Plug 'jiangmiao/auto-pairs'
@@ -27,7 +28,9 @@ let g:NERDSpaceDelims=1 " always insert spaces after commenting
 Plug 'tpope/vim-fugitive'
 Plug 'myusuf3/numbers.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" Update gitgutter on save
+autocmd BufWritePost * GitGutter
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'jremmen/vim-ripgrep'
 Plug 'scrooloose/nerdtree'
@@ -170,7 +173,7 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
-" Show all diagnostics.
+" Show all iagnostics.
 nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
 nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
@@ -218,10 +221,6 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'luochen1990/rainbow'
 let g:rainbow_active = 1 " also :RainbowToggle
-Plug 'APZelos/blamer.nvim'
-let g:blamer_enabled = 1
-let g:blamer_delay = 100
-let g:blamer_show_in_visual_modes = 0
 Plug 'sheerun/vim-polyglot'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'rust-lang/rust.vim'
@@ -233,20 +232,30 @@ Plug 'prettier/vim-prettier', {
 Plug 'gorodinskiy/vim-coloresque'
 Plug 'psf/black'
 Plug 'pangloss/vim-javascript'
+Plug 'heavenshell/vim-jsdoc', { 
+  \ 'for': ['javascript', 'javascript.jsx','typescript'], 
+  \ 'do': 'make install'
+\}
+Plug 'mxw/vim-jsx'
+Plug 'moll/vim-node'
+Plug 'posva/vim-vue'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
  " For Denite features
 Plug 'Shougo/denite.nvim'
-Plug 'mxw/vim-jsx'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'arzg/vim-colors-xcode'
+Plug 'jaredgorski/spacecamp'
+Plug 'sts10/vim-pink-moon'
+Plug 'rakr/vim-two-firewatch'
+Plug 'mhartington/oceanic-next'
+Plug 'nanotech/jellybeans.vim'
+Plug 'cormacrelf/vim-colors-github'
 Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
 Plug 'jpo/vim-railscasts-theme'
 Plug 'doums/darcula'
-Plug 'yuttie/hydrangea-vim'
-Plug 'ayu-theme/ayu-vim'
-Plug 'w0ng/vim-hybrid'
 Plug 'morhetz/gruvbox'
 Plug 'arcticicestudio/nord-vim'
 Plug 'chuling/equinusocio-material.vim'
@@ -285,15 +294,8 @@ set nofoldenable
 
 set termguicolors
 
-" Space vim config
-let g:space_vim_dark_background = 234
-" Gruvbox config
-let g:gruvbox_contrast_dark = 'dark'
-" Ayu config
-let ayucolor = 'mirage'
-
 " ACTUAL COLOR SCHEME
-color gruvbox
+color base16-material-darker
 
 filetype on
 filetype plugin on
@@ -322,8 +324,39 @@ nmap <C-S> :Rg<space>
 " map Rustfmt to <leader>rf
 nmap <leader>rf :RustFmt<cr>
 let g:rustfmt_autosave = 1
-" Set textwidth at 100
-set textwidth=100
+" Switch between tabs
+nnoremap <C-k> :tabnext<cr>
+nnoremap <C-j> :tabprev<cr>
+
+
+" Language specific
+
+" JAVASCRIPT
+" JSDoc generation
+let g:jsdoc_default_mapping = 0
+noremap <Leader>j :JsDoc<cr>
+
+
+" ------- MISC --------
+set listchars=nbsp:·,tab:▸\ ,eol:¬
+set list
+" Pretty fzf
+let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5,  'border': 'sharp' } }
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 augroup custom_filetypes
     au!
