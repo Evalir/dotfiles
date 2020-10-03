@@ -246,6 +246,7 @@ Plug 'Shougo/denite.nvim'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'franbach/miramare'
 Plug 'arzg/vim-colors-xcode'
 Plug 'jaredgorski/spacecamp'
 Plug 'sts10/vim-pink-moon'
@@ -295,7 +296,13 @@ set nofoldenable
 set termguicolors
 
 " ACTUAL COLOR SCHEME
-color base16-material-darker
+let g:gruvbox_termcolors='256'
+let g:gruvbox_contrast_dark='medium'
+let g:gruvbox_color_column ='bg0'
+let g:gruvbox_sign_column ='bg0'
+let g:gruvbox_vert_split='bg0'
+color gruvbox
+
 
 filetype on
 filetype plugin on
