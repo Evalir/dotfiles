@@ -215,11 +215,7 @@ nnoremap <silent> <space>s :<C-u>CocList -I symbols<cr>
 " Remap fix by coc to do
 nmap <leader>do <Plug>(coc-codeaction)
 
-Plug 'vlime/vlime', {'rtp': 'vim/'}
 Plug 'reasonml-editor/vim-reason-plus'
-Plug 'vim-ruby/vim-ruby'
-Plug 'tpope/vim-rails'
-Plug 'luochen1990/rainbow'
 let g:rainbow_active = 1 " also :RainbowToggle
 Plug 'sheerun/vim-polyglot'
 Plug 'mustache/vim-mustache-handlebars'
@@ -246,27 +242,19 @@ Plug 'Shougo/denite.nvim'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'taniarascia/new-moon.vim'
+Plug 'whatyouhide/vim-gotham'
 Plug 'franbach/miramare'
 Plug 'arzg/vim-colors-xcode'
-Plug 'jaredgorski/spacecamp'
-Plug 'sts10/vim-pink-moon'
 Plug 'rakr/vim-two-firewatch'
 Plug 'mhartington/oceanic-next'
-Plug 'nanotech/jellybeans.vim'
-Plug 'cormacrelf/vim-colors-github'
-Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
-Plug 'jpo/vim-railscasts-theme'
 Plug 'doums/darcula'
 Plug 'morhetz/gruvbox'
 Plug 'arcticicestudio/nord-vim'
-Plug 'chuling/equinusocio-material.vim'
-Plug 'liuchengxu/space-vim-theme'
-Plug 'liuchengxu/space-vim-dark'
 Plug 'joshdick/onedark.vim'
 Plug 'rakr/vim-one'
 Plug 'chriskempson/base16-vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'haishanh/night-owl.vim'
 Plug 'crusoexia/vim-monokai'
 call plug#end()
 
@@ -293,16 +281,19 @@ set encoding=utf-8
 set nofoldenable
 "----- SYNTAX CONFIG ------
 
+set t_Co=256
+if has("termguicolors")
+  set termguicolors
+endif
 set termguicolors
-
 " ACTUAL COLOR SCHEME
-let g:gruvbox_termcolors='256'
-let g:gruvbox_contrast_dark='medium'
-let g:gruvbox_color_column ='bg0'
-let g:gruvbox_sign_column ='bg0'
-let g:gruvbox_vert_split='bg0'
-color gruvbox
+" let g:gruvbox_termcolors='256'
+" let g:gruvbox_contrast_dark='hard'
+" let g:gruvbox_color_column ='bg0'
+" let g:gruvbox_sign_column ='bg0'
+" let g:gruvbox_vert_split='bg0'
 
+color nord
 
 filetype on
 filetype plugin on

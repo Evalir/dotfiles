@@ -13,6 +13,7 @@ font:
     # family: "Iosevka"
     # family: "Fantasque Sans Mono"
     family: "JetBrains Mono"
+    # family: "Consolas"
     # family: "Fira Code"
     # family: "Roboto Mono"
     # family: "Source Code Pro"
@@ -20,6 +21,7 @@ font:
 
   # The bold font face
   bold:
+    # family: "Consolas"
     # family: "DejaVu Sans Mono Book"
     # family: "Fantasque Sans Mono"
     # family: "Monaco"
@@ -35,55 +37,40 @@ font:
     # family: "Fantasque Sans Mono"
     # family: "Monaco"
     # family: "Iosevka"
+    # family: "Consolas"
     family: "JetBrains Mono"
     # family: "Fira Code"
     # family: "Roboto Mono"
     # family: "Source Code Pro"
     style: "Medium Italic"
-  size: 12
+  size: 12.5
 
 
-# KDE Breeze (Ported from Konsole)
+# Colors (Gotham)
 colors:
   # Default colors
   primary:
-    background: '0x232627'
-    foreground: '0xfcfcfc'
-
-    dim_foreground: '0xeff0f1'
-    bright_foreground: '0xffffff'
-    dim_background: '0x31363b'
-    bright_background: '0x000000'
+    background: '0x0a0f14'
+    foreground: '0x98d1ce'
 
   # Normal colors
   normal:
-    black: '0x232627'
-    red: '0xed1515'
-    green: '0x11d116'
-    yellow: '0xf67400'
-    blue: '0x1d99f3'
-    magenta: '0x9b59b6'
-    cyan: '0x1abc9c'
-    white: '0xfcfcfc'
+    black: '0x0a0f14'
+    red: '0xc33027'
+    green: '0x26a98b'
+    yellow: '0xedb54b'
+    blue: '0x195465'
+    magenta: '0x4e5165'
+    cyan: '0x33859d'
+    white: '0x98d1ce'
 
   # Bright colors
   bright:
-    black: '0x7f8c8d'
-    red: '0xc0392b'
-    green: '0x1cdc9a'
-    yellow: '0xfdbc4b'
-    blue: '0x3daee9'
-    magenta: '0x8e44ad'
-    cyan: '0x16a085'
-    white: '0xffffff'
-
-  # Dim colors
-  dim:
-    black: '0x31363b'
-    red: '0x783228'
-    green: '0x17a262'
-    yellow: '0xb65619'
-    blue: '0x1b668f'
-    magenta: '0x614a73'
-    cyan: '0x186c60'
-    white: '0x63686d'
+    black: '0x10151b'
+    red: '0xd26939'
+    green: '0x081f2d'
+    yellow: '0x245361'
+    blue: '0x093748'
+    magenta: '0x888ba5'
+    cyan: '0x599caa'
+    white: '0xd3ebe9'
