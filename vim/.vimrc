@@ -39,6 +39,7 @@ Plug 'ntpeters/vim-better-whitespace'
 " devtools / dev setup
 " -------- coc.vim setup ---------
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+set runtimepath^=~/coc-solidity/packages/coc-solidity
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
   \ 'coc-html',
@@ -48,7 +49,7 @@ let g:coc_global_extensions = [
   \ 'coc-prettier',
   \ 'coc-eslint',
   \ 'coc-go',
-  \ 'coc-rls'
+  \ 'coc-rls',
   \ ]
 
 " COC INITIAL SETUP
@@ -217,6 +218,7 @@ nmap <leader>do <Plug>(coc-codeaction)
 
 Plug 'reasonml-editor/vim-reason-plus'
 let g:rainbow_active = 1 " also :RainbowToggle
+Plug 'AlessandroYorba/Sierra'
 Plug 'sheerun/vim-polyglot'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'rust-lang/rust.vim'
@@ -228,8 +230,8 @@ Plug 'prettier/vim-prettier', {
 Plug 'gorodinskiy/vim-coloresque'
 Plug 'psf/black'
 Plug 'pangloss/vim-javascript'
-Plug 'heavenshell/vim-jsdoc', { 
-  \ 'for': ['javascript', 'javascript.jsx','typescript'], 
+Plug 'heavenshell/vim-jsdoc', {
+  \ 'for': ['javascript', 'javascript.jsx','typescript'],
   \ 'do': 'make install'
 \}
 Plug 'mxw/vim-jsx'
@@ -242,6 +244,11 @@ Plug 'Shougo/denite.nvim'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorschemes
+Plug 'lifepillar/vim-wwdc16-theme'
+Plug 'romgrk/doom-one.vim'
+Plug 'sainnhe/sonokai'
+Plug 'kaicataldo/material.vim', { 'branch': 'main' }
+Plug 'mhartington/oceanic-next'
 Plug 'taniarascia/new-moon.vim'
 Plug 'whatyouhide/vim-gotham'
 Plug 'franbach/miramare'
@@ -293,7 +300,8 @@ set termguicolors
 " let g:gruvbox_sign_column ='bg0'
 " let g:gruvbox_vert_split='bg0'
 
-color nord
+let g:material_theme_style = 'darker-community'
+color doom-one
 
 filetype on
 filetype plugin on
