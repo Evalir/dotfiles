@@ -42,7 +42,6 @@ let g:coc_global_extensions = [
   \ 'coc-yaml',
   \ 'coc-json',
   \ 'coc-html',
-  \ 'coc-graphql',
   \ 'coc-css',
   \ 'coc-sh',
   \ 'coc-prettier',
@@ -64,7 +63,7 @@ set cmdheight=2
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=300
+set updatetime=100
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -229,8 +228,9 @@ nmap <leader>do <Plug>(coc-codeaction)
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'leafgarland/typescript-vim'
 Plug 'pangloss/vim-javascript'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'mxw/vim-jsx'
 Plug 'jparise/vim-graphql'
@@ -247,7 +247,6 @@ Plug 'moll/vim-node'
 Plug 'posva/vim-vue'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
-Plug 'gorodinskiy/vim-coloresque'
 " colorscheme
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'haishanh/night-owl.vim'
@@ -284,7 +283,6 @@ set encoding=utf-8
 " No auto folding
 set nofoldenable
 "----- SYNTAX CONFIG ------
-
 set t_Co=256
 if has("termguicolors")
   set termguicolors
@@ -303,12 +301,8 @@ color OceanicNext
 filetype on
 filetype plugin on
 filetype indent on " file type based indentation
-
-autocmd FileType go setlocal shiftwidth=4 tabstop=4 expandtab
-autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType css setlocal shiftwidth=2 tabstop=2 expandtab
-
+autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 "----- KEYBIND REMAP CONFIG ------
 
