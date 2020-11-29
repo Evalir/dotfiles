@@ -27,9 +27,6 @@ Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims=1 " always insert spaces after commenting
 Plug 'tpope/vim-fugitive'
 Plug 'myusuf3/numbers.vim'
-Plug 'airblade/vim-gitgutter'
-" Update gitgutter on save
-autocmd BufWritePost * GitGutter
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'jremmen/vim-ripgrep'
@@ -39,13 +36,15 @@ Plug 'ntpeters/vim-better-whitespace'
 " devtools / dev setup
 " -------- coc.vim setup ---------
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-set runtimepath^=~/coc-solidity/packages/coc-solidity
 let g:coc_global_extensions = [
   \ 'coc-tsserver',
+  \ 'coc-tslint-plugin',
+  \ 'coc-yaml',
+  \ 'coc-json',
   \ 'coc-html',
+  \ 'coc-graphql',
   \ 'coc-css',
   \ 'coc-sh',
-  \ 'coc-reason',
   \ 'coc-prettier',
   \ 'coc-eslint',
   \ 'coc-go',
@@ -78,6 +77,7 @@ if has("patch-8.1.1564")
 else
   set signcolumn=yes
 endif
+
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -93,16 +93,27 @@ function! s:check_back_space() abort
 endfunction
 
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-" <cr> could be reapped by other vim plugin, try `:verbose imap <CR>`.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
 else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  inoremap <silent><expr> <c-@> coc#refresh()
 endif
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -110,8 +121,10 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
-  else
+  elseif (coc#rpc#ready())
     call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
 
@@ -154,8 +167,25 @@ omap ic <Plug>(coc-classobj-i)
 xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
 
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" NeoVim-only mapping for visual mode scroll
+" Useful on signatureHelp after jump placeholder of snippet expansion
+if has('nvim')
+  vnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#nvim_scroll(1, 1) : "\<C-f>"
+  vnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#nvim_scroll(0, 1) : "\<C-b>"
+endif
+
 " Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
+" Requires 'textDocument/selectionRange' support of language server.
 nmap <silent> <C-s> <Plug>(coc-range-select)
 xmap <silent> <C-s> <Plug>(coc-range-select)
 
@@ -174,7 +204,7 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
-" Show all iagnostics.
+" Show all diagnostics.
 nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
 nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
@@ -190,79 +220,44 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
-
-" Taken from https://thoughtbot.com/blog/modern-typescript-and-react-development-in-vim
-" Shows the diagnostic if any, and fallback to the documentation
-function! ShowDocIfNoDiagnostic(timer_id)
-  if (coc#util#has_float() == 0)
-    silent call CocActionAsync('doHover')
-  endif
-endfunction
-
-function! s:show_hover_doc()
-  call timer_start(200, 'ShowDocIfNoDiagnostic')
-endfunction
-
-
-autocmd CursorHoldI * :call <SID>show_hover_doc()
-autocmd CursorHold * :call <SID>show_hover_doc()
-" Also taken from thoughtbot, normal bindings for go to definition, types, and references
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gr <Plug>(coc-references)
 " Remap diagnostics and symbols
 nnoremap <silent> <space>d :<C-u>CocList diagnostics<cr>
 nnoremap <silent> <space>s :<C-u>CocList -I symbols<cr>
 " Remap fix by coc to do
 nmap <leader>do <Plug>(coc-codeaction)
 
-Plug 'reasonml-editor/vim-reason-plus'
-let g:rainbow_active = 1 " also :RainbowToggle
-Plug 'AlessandroYorba/Sierra'
-Plug 'sheerun/vim-polyglot'
-Plug 'mustache/vim-mustache-handlebars'
 Plug 'rust-lang/rust.vim'
 Plug 'tomlion/vim-solidity'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'leafgarland/typescript-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'mxw/vim-jsx'
+Plug 'jparise/vim-graphql'
+Plug 'tomlion/vim-solidity'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'solidity', 'php', 'swift', 'python', 'reason'] }
-Plug 'gorodinskiy/vim-coloresque'
 Plug 'psf/black'
-Plug 'pangloss/vim-javascript'
 Plug 'heavenshell/vim-jsdoc', {
   \ 'for': ['javascript', 'javascript.jsx','typescript'],
   \ 'do': 'make install'
 \}
-Plug 'mxw/vim-jsx'
 Plug 'moll/vim-node'
 Plug 'posva/vim-vue'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
- " For Denite features
-Plug 'Shougo/denite.nvim'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
-" colorschemes
-Plug 'lifepillar/vim-wwdc16-theme'
+Plug 'gorodinskiy/vim-coloresque'
+" colorscheme
+Plug 'drewtempelmeyer/palenight.vim'
+Plug 'haishanh/night-owl.vim'
 Plug 'romgrk/doom-one.vim'
-Plug 'sainnhe/sonokai'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 Plug 'mhartington/oceanic-next'
-Plug 'taniarascia/new-moon.vim'
-Plug 'whatyouhide/vim-gotham'
-Plug 'franbach/miramare'
-Plug 'arzg/vim-colors-xcode'
-Plug 'rakr/vim-two-firewatch'
-Plug 'mhartington/oceanic-next'
-Plug 'doums/darcula'
 Plug 'morhetz/gruvbox'
 Plug 'arcticicestudio/nord-vim'
-Plug 'joshdick/onedark.vim'
 Plug 'rakr/vim-one'
-Plug 'chriskempson/base16-vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'crusoexia/vim-monokai'
 call plug#end()
 
 "----- GENERAL CONFIG ------
@@ -273,7 +268,9 @@ set softtabstop=4 " useful for python, for example
 set shiftwidth=2 " indents -> width 4
 set expandtab "expand tab to space
 set hlsearch
+" Copy and paste for vim in the same register of the whole computer
 set clipboard=unnamed
+set clipboard=unnamedplus
 set mouse=a
 " highlight line you're on
 set cursorline
@@ -294,14 +291,14 @@ if has("termguicolors")
 endif
 set termguicolors
 " ACTUAL COLOR SCHEME
-" let g:gruvbox_termcolors='256'
-" let g:gruvbox_contrast_dark='hard'
-" let g:gruvbox_color_column ='bg0'
-" let g:gruvbox_sign_column ='bg0'
-" let g:gruvbox_vert_split='bg0'
+let g:gruvbox_termcolors='256'
+let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_color_column ='bg0'
+let g:gruvbox_sign_column ='bg0'
+let g:gruvbox_vert_split='bg0'
 
 let g:material_theme_style = 'darker-community'
-color doom-one
+color OceanicNext
 
 filetype on
 filetype plugin on
