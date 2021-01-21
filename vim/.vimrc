@@ -29,6 +29,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'myusuf3/numbers.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'yuki-ycino/fzf-preview.vim', { 'branch': 'release', 'do': ':UpdateRemotePlugins' }
 Plug 'jremmen/vim-ripgrep'
 Plug 'scrooloose/nerdtree'
 let NERDTreeShowHidden=1
@@ -247,9 +248,9 @@ Plug 'posva/vim-vue'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorscheme
-Plug 'drewtempelmeyer/palenight.vim'
+Plug 'connorholyday/vim-snazzy'
+Plug 'chriskempson/base16-vim'
 Plug 'haishanh/night-owl.vim'
-Plug 'romgrk/doom-one.vim'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 Plug 'mhartington/oceanic-next'
 Plug 'morhetz/gruvbox'
@@ -287,15 +288,19 @@ if has("termguicolors")
   set termguicolors
 endif
 set termguicolors
-" ACTUAL COLOR SCHEME
+
+" Gruvbox config
 let g:gruvbox_termcolors='256'
 let g:gruvbox_contrast_dark='hard'
 let g:gruvbox_color_column ='bg0'
 let g:gruvbox_sign_column ='bg0'
 let g:gruvbox_vert_split='bg0'
 
+" Material config
 let g:material_theme_style = 'darker-community'
-color OceanicNext
+
+" ACTUAL COLOR SCHEME
+color one
 
 filetype on
 filetype plugin on
@@ -307,14 +312,21 @@ autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 " Fast :nohls
 nmap <leader>no :nohls<cr>
-" As in gt for go to next tab, gb for go to next
-nmap gb :bnext<cr>
 " Close buffers easil by doing leader db
 nmap <leader>db :bd<cr>
 " also map ctrl b (vscode)
 nmap <C-B> :NERDTreeToggle <space><cr>
-" map ctrl f to fzf (finder), respecting gitignore and making it fast af
-nnoremap <expr> <C-f> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+" OLD: map ctrl f to fzf (finder), respecting gitignore and making it fast af
+" nnoremap <expr> <C-f> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+
+" Now, let's use fzf-preview to do this :D
+nmap <C-f> :FzfPreviewGitFiles <space><cr>
+" Visualize buffers with leader ( \ ) f
+nmap <leader>fb :FzfPreviewBuffers<cr>
+" Also see the branches for easy switching with leader b
+nmap <leader>gb :FzfPreviewGitBranches<cr>
+nmap <leader>gs :FzfPreviewGitStatus<cr>
+nmap <leader>ga :FzfPreviewGitActions<cr>
 " map ctrl s to find ocurrences (ripgrep)
 nmap <C-S> :Rg<space>
 " map Rustfmt to <leader>rf
@@ -336,7 +348,7 @@ noremap <Leader>j :JsDoc<cr>
 " ------- MISC --------
 set listchars=nbsp:·,tab:▸\ ,eol:¬
 set list
-" Pretty fzf
+" Pretty fzf with cool floating windows and stuff
 let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5,  'border': 'sharp' } }
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
