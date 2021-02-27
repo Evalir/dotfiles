@@ -232,7 +232,6 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'pangloss/vim-javascript'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'leafgarland/typescript-vim'
-Plug 'mxw/vim-jsx'
 Plug 'jparise/vim-graphql'
 Plug 'tomlion/vim-solidity'
 Plug 'prettier/vim-prettier', {
@@ -248,10 +247,7 @@ Plug 'posva/vim-vue'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 " colorscheme
-Plug 'connorholyday/vim-snazzy'
-Plug 'chriskempson/base16-vim'
 Plug 'haishanh/night-owl.vim'
-Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 Plug 'mhartington/oceanic-next'
 Plug 'morhetz/gruvbox'
 Plug 'arcticicestudio/nord-vim'
@@ -300,7 +296,7 @@ let g:gruvbox_vert_split='bg0'
 let g:material_theme_style = 'darker-community'
 
 " ACTUAL COLOR SCHEME
-color one
+color gruvbox
 
 filetype on
 filetype plugin on
@@ -310,6 +306,8 @@ autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 "----- KEYBIND REMAP CONFIG ------
 
+" emmet
+let g:user_emmet_leader_key='<C-M>'
 " Fast :nohls
 nmap <leader>no :nohls<cr>
 " Close buffers easil by doing leader db
