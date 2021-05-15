@@ -1,7 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/Evalir/.oh-my-zsh
+export ZSH=/home/evalir/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -19,6 +19,8 @@ eval $(thefuck --alias)
 # Make sure you have this installed before sourcing this zsh.
 # Use the cUrl comman; I have no idea how to use brew for this 🤷
 source ~/antigen.zsh
+
+antigen use oh-my-zsh
 
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle 'wfxr/forgit'
@@ -75,8 +77,8 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
-alias ara="cd ~/Dev/Work/Aragon"
-alias pkn="cd ~/Dev/Work/Pocket"
+alias ara="cd ~/js/aragon"
+alias pkn="cd ~/js/pocket"
 alias dog="cat"
 alias dotfiles="cd ~/Dev/dotfiles && v"
 alias gclone="git clone"
