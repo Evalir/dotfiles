@@ -68,7 +68,7 @@ require'nvim-tree'.setup {
 
 require('bufferline').setup{
  options = {
-  offsets = { { filetype = "NvimTree", text = "", padding = 1 } },
+  offsets = { { filetype = "NvimTree", text = "File Explorer", padding = 1 } },
   buffer_close_icon = "",
   modified_icon = "",
   -- close_icon = "%@NvChad_bufferline_quitvim@%X",
@@ -83,9 +83,19 @@ require('bufferline').setup{
   enforce_regular_tabs = false,
   view = "multiwindow",
   show_buffer_close_icons = true,
-  separator_style = "thin",
+  show_buffer_icons = true,
+  separator_style = "slant",
   always_show_bufferline = true,
-  diagnostics = false, -- "or nvim_lsp"
+  diagnostics = "coc",
+  diagnostics_indicator = function(count, level, diagnostics_dict, context)
+  local s = " "
+  for e, n in pairs(diagnostics_dict) do
+    local sym = e == "error" and " "
+      or (e == "warning" and " " or "" )
+    s = s .. n .. sym
+  end
+  return s
+end,
   custom_filter = function(buf_number)
      -- Func to filter out our managed/persistent split terms
      local present_type, type = pcall(function()

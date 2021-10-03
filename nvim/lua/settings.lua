@@ -27,6 +27,7 @@ opt.hlsearch = true
 opt.ignorecase = true
 opt.incsearch = true
 opt.relativenumber = true
+vim.cmd([[set nu rnu]])
 opt.shiftwidth = 2
 opt.smartcase = true
 opt.smartindent = true
