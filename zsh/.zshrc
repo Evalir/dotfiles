@@ -1,7 +1,10 @@
+#### FIG ENV VARIABLES ####
+[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+#### END FIG ENV VARIABLES ####
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
-export ZSH=/home/evalir/.oh-my-zsh
+export ZSH=/Users/Evalir/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -19,8 +22,6 @@ eval $(thefuck --alias)
 # Make sure you have this installed before sourcing this zsh.
 # Use the cUrl comman; I have no idea how to use brew for this 🤷
 source ~/antigen.zsh
-
-antigen use oh-my-zsh
 
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle 'wfxr/forgit'
@@ -77,12 +78,12 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
-alias ara="cd ~/js/aragon"
-alias pkn="cd ~/js/pocket"
+alias ara="cd ~/Dev/Work/Aragon"
+alias pkn="cd ~/Dev/Work/Pocket"
 alias dog="cat"
 alias dotfiles="cd ~/Dev/dotfiles && v"
 alias gclone="git clone"
-alias gp="git push"
+alias gp="echo 'gp2 engine!';git push"
 alias gpu="echo'🎉';git push -u"
 alias gt="git"
 alias glog="git --no-pager log --oneline -20"
@@ -101,6 +102,10 @@ alias vi="nvim"
 alias vim="nvim"
 alias yolo="echo 'banda de camion 🚛';git push -f"
 alias zsc="nvim ~/.zshrc"
+alias magic='f() {branch=$(git rev-parse --abbrev-ref HEAD); git commit -m "$1" && git push -u origin $branch;};f'
+alias sambil="sam build"
+# update dotfiles repo from actual nvim config
+alias dotup="echo 'updating dotfiles...';rm -rf ~/dotfiles/nvim && cp -R  ~/.config/nvim ~/dotfiles/nvim && rm -rf ~/dotfiles/nvim/autoload ~/dotfiles/nvim/colors ~/dotfiles/nvim/plugin"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
@@ -127,3 +132,6 @@ export PATH="$PATH:$HOME/.rvm/bin"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(starship init zsh)"
 
+#### FIG ENV VARIABLES ####
+[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+#### END FIG ENV VARIABLES ####
