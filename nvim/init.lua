@@ -6,4 +6,5 @@ require('fzf')
 require('keybinds')
 
 -- Colors!
-require('onedark').setup()
+-- require('onedark').setup()
+vim.cmd('colorscheme gruvbox-flat')

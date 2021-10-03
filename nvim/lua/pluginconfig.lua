@@ -1,8 +1,6 @@
-vim.cmd([[
-let g:lightline = {
-      \ 'colorscheme': 'one',
-      \ }
-]])
+require('lualine').setup({
+  options = {theme = 'gruvbox'},
+})
 -- following options are the default
 require'nvim-tree'.setup {
   -- disables netrw completely

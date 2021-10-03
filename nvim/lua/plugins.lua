@@ -1,11 +1,15 @@
+function reapply_colorscheme()
+  vim.cmd('colorscheme ' .. vim.api.nvim_exec('colorscheme', true))
+end
+
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
   use 'karb94/neoscroll.nvim'
   -- status bar
   use {
-    'itchyny/lightline.vim',
-    config = function() vim.g.lightline = { colorscheme = 'one' } end
+    'hoob3rt/lualine.nvim',
+    requires = {'kyazdani42/nvim-web-devicons', opt = true}
   }
 
  -- fancy bufferline
@@ -30,6 +34,7 @@ return require('packer').startup(function()
     config = function()
       vim.g.gruvbox_transparent = true
       vim.g.gruvbox_flat_style = "hard"
+      reapply_colorscheme()
     end
   }
   use 'norcalli/nvim-colorizer.lua'
