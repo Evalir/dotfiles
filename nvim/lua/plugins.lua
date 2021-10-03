@@ -1,6 +1,7 @@
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
+  use 'karb94/neoscroll.nvim'
   -- status bar
   use {
     'itchyny/lightline.vim',

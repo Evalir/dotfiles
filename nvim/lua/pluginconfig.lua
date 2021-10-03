@@ -66,8 +66,19 @@ require'nvim-tree'.setup {
   }
 }
 
+require('neoscroll').setup({
+  mappings = {'<C-u>', '<C-d>'},
+})
+
+local t = {}
+-- Syntax: t[keys] = {function, {function arguments}}
+t['<C-u>'] = {'scroll', {'-vim.wo.scroll', 'true', '50'}}
+t['<C-d>'] = {'scroll', { 'vim.wo.scroll', 'true', '50'}}
+
+require('neoscroll.config').set_mappings(t)
+
 require('bufferline').setup{
- options = {
+  options = {
   offsets = { { filetype = "NvimTree", text = "File Explorer", padding = 1 } },
   buffer_close_icon = "",
   modified_icon = "",
@@ -95,7 +106,7 @@ require('bufferline').setup{
     s = s .. n .. sym
   end
   return s
-end,
+  end,
   custom_filter = function(buf_number)
      -- Func to filter out our managed/persistent split terms
      local present_type, type = pcall(function()
@@ -114,5 +125,9 @@ end,
         return true
      end
   end,
+  }
 }
+
+require('colorizer').setup{
+  '*';
 }
