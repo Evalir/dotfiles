@@ -1,5 +1,5 @@
 require('lualine').setup({
-  options = {theme = 'gruvbox'},
+  options = {theme = 'onedark'},
 })
 -- following options are the default
 require'nvim-tree'.setup {

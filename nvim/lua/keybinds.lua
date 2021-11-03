@@ -13,7 +13,10 @@ map('', '<leader>db', ':bd<cr>')
 -- telescope bindings
 map('', '<C-f>', '<cmd>Telescope find_files<cr>')
 map('', '<C-g>', '<cmd>Telescope git_files<cr>')
-map('', '<C-S>', ':<cmd>Telescope live_grep<cr>')
+map('', '<C-S>', ':<cmd>Telescope live_grep<cr><enter>')
+map('', '<leader>tr', '<cmd>Telescope treesitter<cr>')
+map('', '<leader>tl', '<cmd>Telescope<cr>')
+map('', '<leader>fb', '<cmd>Telescope file_browser<cr>')
 map('', '<C-b>', ':<cmd>NvimTreeToggle<cr><enter>')
 map('', '<leader>bf', '<cmd>Telescope buffers<cr>')
 map('', '<leader>gc', '<cmd>Telescope git_commits<cr><enter>')
@@ -41,3 +44,11 @@ map('', '<C-j>', ':tabprev<cr>')
 -- JsDoc
 vim.g['jsdoc_default_mapping'] = 0
 map('', '<leader>j', ':JsDoc<cr>')
+
+-- commnting
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>ff",
+	"v:lua.require'commented'.codetags.fixme_line()",
+	{ expr = true, silent = true, noremap = true }
+)

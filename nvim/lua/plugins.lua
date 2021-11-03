@@ -5,6 +5,12 @@ end
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
+  use 'npxbr/gruvbox.nvim'
+
+  use 'tpope/vim-surround'
+
+  use 'preservim/nerdcommenter'
+
   use 'karb94/neoscroll.nvim'
   -- status bar
   use {
@@ -19,6 +25,10 @@ return require('packer').startup(function()
   }
 
   use 'voldikss/vim-floaterm'
+  use { "Lunarvim/Onedarker" }
+
+  -- commenting
+  use{'winston0410/commented.nvim'}
 
   use {
       'kyazdani42/nvim-tree.lua',
