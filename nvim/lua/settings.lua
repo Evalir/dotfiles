@@ -9,7 +9,6 @@ opt.inccommand = 'nosplit'
 
 -- 24 bits colors
 opt.termguicolors = true
-opt.background = 'dark'
 
 -- disable column
 opt.colorcolumn = ''
@@ -39,11 +38,7 @@ opt.wrap = true
 opt.autoread = true
 -- no auto folding
 opt.foldenable = false
-
--- show some invisible characters
-opt.list = true
-opt.listchars = 'nbsp:·,tab:▸\\ ,eol:¬'
-
+  
 -- misc
 -- custom filetypes
 vim.cmd([[
@@ -59,6 +54,36 @@ augroup END
 
 ]])
 
+-- go
+vim.cmd([[
+au FileType go set noexpandtab
+au FileType go set shiftwidth=4
+au FileType go set softtabstop=4
+au FileType go set tabstop=4
+
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+
+let g:go_auto_sameids = 1
+
+let g:go_fmt_command = "goimports"
+
+au FileType go nmap <leader>gt :GoDeclsDir<cr>
+]])
+
+-- solidity
+vim.cmd([[
+au FileType solidity set noexpandtab
+au FileType solidity set shiftwidth=4
+au FileType solidity set softtabstop=4
+au FileType solidity set tabstop=4
+]])
 -- rustfmt autosave
 vim.cmd([[let g:rustfmt_autosave = 1]])
 

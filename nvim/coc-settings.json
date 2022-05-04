@@ -5,13 +5,21 @@
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
       "filetypes": ["go"],
       "initializationOptions": {
+        "gocodeCompletionEnabled": true,
+        "diagnosticsEnabled": true,
         "usePlaceholders": true
       }
+    },
+    "solidity": {
+      "command": "solc",
+      "args": ["--lsp"],
+      "trace.server": "verbose",
+      "rootPatterns": [".git/"],
+      "filetypes": ["solidity"]
     }
   },
-  "prettier.eslintIntegration": true,
   "prettier.semi": false,
   "prettier.singleQuote": true,
   "prettier.trailingComma": "es5",
-  "prettier.tslintIntegration": true,
+  "rust-analyzer.enable": true
 }

@@ -4,13 +4,11 @@ end
 
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
-
-  use 'npxbr/gruvbox.nvim'
-
+  use 'tomlion/vim-solidity'
+  use 'jiangmiao/auto-pairs'
   use 'tpope/vim-surround'
-
+  use "norcalli/nvim.lua"
   use 'preservim/nerdcommenter'
-
   use 'karb94/neoscroll.nvim'
   -- status bar
   use {
@@ -18,17 +16,11 @@ return require('packer').startup(function()
     requires = {'kyazdani42/nvim-web-devicons', opt = true}
   }
 
- -- fancy bufferline
-  use {
-    'akinsho/bufferline.nvim', 
-    requires = 'kyazdani42/nvim-web-devicons'
-  }
-
   use 'voldikss/vim-floaterm'
   use { "Lunarvim/Onedarker" }
 
   -- commenting
-  use{'winston0410/commented.nvim'}
+  use {'winston0410/commented.nvim'}
 
   use {
       'kyazdani42/nvim-tree.lua',
@@ -36,29 +28,48 @@ return require('packer').startup(function()
       config = function() require'nvim-tree'.setup {} end
   }
   -- coloration
-  -- use 'gruvbox-community/gruvbox'
-  use 'norcalli/nvim-base16.lua'
+  use 'ishan9299/nvim-solarized-lua'
+  use 'liuchengxu/space-vim-dark'
   use 'monsonjeremy/onedark.nvim'
-  use {
-    'eddyekofo94/gruvbox-flat.nvim',
-    config = function()
-      vim.g.gruvbox_transparent = true
-      vim.g.gruvbox_flat_style = "hard"
-      reapply_colorscheme()
-    end
-  }
+  use 'morhetz/gruvbox'
   use 'norcalli/nvim-colorizer.lua'
+  use 'sainnhe/gruvbox-material'
+  use "projekt0n/github-nvim-theme"
+  -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = function()
       require('nvim-treesitter.configs').setup {
-        highlight = { enable = true },
-        indent = { enable = true }
+        -- A list of parser names, or "all"
+        ensure_installed = { "c", "lua", "rust" },
+
+        -- Install parsers synchronously (only applied to `ensure_installed`)
+        sync_install = false,
+
+        -- List of parsers to ignore installing (for "all")
+        ignore_install = { "javascript" },
+
+        highlight = {
+          -- `false` will disable the whole extension
+          enable = true,
+
+          -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+          -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+          -- the name of the parser)
+          -- list of language that will be disabled
+          disable = { "c", "rust" },
+
+          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+          -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+          -- Using this option may slow down your editor, and you may see some duplicate highlights.
+          -- Instead of true it can also be a list of languages
+          additional_vim_regex_highlighting = false,
+        },
       }
     end
   }
-  --
+
   -- start screen
   use {
     'mhinz/vim-startify',
@@ -78,7 +89,7 @@ return require('packer').startup(function()
     -- adjusts 'shiftwidth' and 'expandtab' heuristically
   use 'tpope/vim-sleuth'
 
-  -- telescope
+   --telescope
   use {
     'nvim-telescope/telescope.nvim',
     cmd = { "Telescope" },
@@ -88,14 +99,13 @@ return require('packer').startup(function()
         layout_strategy = 'center',
         extensions = {
           fzf = {
-            fuzzy = true, -- false will only do exact matching
-            override_generic_sorter = false, -- override the generic sorter
-            override_file_sorter = true -- override the file sorter
+            fuzzy = true,
+            override_generic_sorter = false,
+            override_file_sorter = true
           }
         },
         defaults = {
-          -- Lua regex patterns: http://www.lua.org/pil/20.2.html
-          -- "pkg/demo",
+           "pkg/demo",
           file_ignore_patterns = {
             "pkg/kit%-legacy", "pkg/website", "node_modules", "**/*.png",
             "**/*.jpg", "**/*.gif", "**/*.woff2", "**/*.mp4"
@@ -163,12 +173,16 @@ return require('packer').startup(function()
   -- git
   use 'tpope/vim-fugitive'
   use 'airblade/vim-gitgutter'
+  use 'tpope/vim-rhubarb'
+
+  -- debugging
+  use 'mfussenegger/nvim-dap'
 
   -- languages
-  use { 'rust-lang/rust.vim', ft = { 'rust' } }
-  use { 'tomlion/vim-solidity', ft = { 'solidity' } }
-  use { 'zah/nim.vim', ft = { 'nim' } }
-  use { 'tikhomirov/vim-glsl', ft = { 'glsl' } }
+  -- rust
+  use 'simrat39/rust-tools.nvim'
+
+  -- md
   use {
     'plasticboy/vim-markdown',
     ft = { 'markdown' },
@@ -178,7 +192,14 @@ return require('packer').startup(function()
       }
     end
   }
-    -- JS
+  -- hcl
+  use 'jvirtanen/vim-hcl'
+
+  -- go
+  -- CoC doesn't play nice with it, it seems
+  use 'fatih/vim-go'
+
+    -- js
   local jsts = {
     'javascript', 'javascriptreact', 'typescript', 'typescriptreact'
   }

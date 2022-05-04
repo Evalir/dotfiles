@@ -1,7 +1,9 @@
+-- lualine config
 require('lualine').setup({
-  options = {theme = 'onedark'},
+  options = {theme = 'auto'},
 })
--- following options are the default
+
+-- nvim-tree config (pretty much the defaults)
 require'nvim-tree'.setup {
   -- disables netrw completely
   disable_netrw       = true,
@@ -26,8 +28,6 @@ require'nvim-tree'.setup {
   hijack_cursor       = false,
   -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually) 
   update_cwd          = false,
-  -- show lsp diagnostics in the signcolumn
-  lsp_diagnostics     = false,
   -- update the focused file on `BufEnter`, un-collapses the folders recursively until it finds the file
   update_focused_file = {
     -- enables the feature
@@ -75,57 +75,11 @@ t['<C-d>'] = {'scroll', { 'vim.wo.scroll', 'true', '50'}}
 
 require('neoscroll.config').set_mappings(t)
 
-require('bufferline').setup{
-  options = {
-  offsets = { { filetype = "NvimTree", text = "File Explorer", padding = 1 } },
-  buffer_close_icon = "",
-  modified_icon = "",
-  -- close_icon = "%@NvChad_bufferline_quitvim@%X",
-  close_icon = "",
-  show_close_icon = true,
-  left_trunc_marker = "",
-  right_trunc_marker = "",
-  max_name_length = 14,
-  max_prefix_length = 13,
-  tab_size = 20,
-  show_tab_indicators = true,
-  enforce_regular_tabs = false,
-  view = "multiwindow",
-  show_buffer_close_icons = true,
-  show_buffer_icons = true,
-  separator_style = "slant",
-  always_show_bufferline = true,
-  diagnostics = "coc",
-  diagnostics_indicator = function(count, level, diagnostics_dict, context)
-  local s = " "
-  for e, n in pairs(diagnostics_dict) do
-    local sym = e == "error" and " "
-      or (e == "warning" and " " or "" )
-    s = s .. n .. sym
-  end
-  return s
-  end,
-  custom_filter = function(buf_number)
-     -- Func to filter out our managed/persistent split terms
-     local present_type, type = pcall(function()
-        return vim.api.nvim_buf_get_var(buf_number, "term_type")
-     end)
-
-     if present_type then
-        if type == "vert" then
-           return false
-        elseif type == "hori" then
-           return false
-        else
-           return true
-        end
-     else
-        return true
-     end
-  end,
-  }
-}
-
 require('colorizer').setup{
   '*';
 }
+
+vim.cmd([[
+  let g:go_doc_keywordprg_enabled = 0
+  let g:go_doc_popup_window = 1
+]])
