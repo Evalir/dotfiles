@@ -27,19 +27,34 @@ opt.ignorecase = true
 opt.incsearch = true
 opt.relativenumber = true
 vim.cmd([[set nu rnu]])
-opt.shiftwidth = 2
+opt.shiftwidth = 4
 opt.smartcase = true
 opt.smartindent = true
-opt.softtabstop = 2
-opt.tabstop = 2
+opt.softtabstop = 4
+opt.tabstop = 4
 opt.wrap = true
 
 -- set to auto read when a file is changed from the outside
 opt.autoread = true
 -- no auto folding
 opt.foldenable = false
-  
+
+
+vim.o.encoding = 'UTF-8'
+vim.o.list = true
+vim.o.showbreak = '↪'
+vim.opt.listchars = {
+  tab = '→ ',
+  eol = '¬',
+  nbsp = '␣',
+  trail = '•',
+  extends = '⟩',
+  precedes = '⟨'
+}
+
 -- misc
+-- set cursor to block on insert mode
+vim.cmd([[ set guicursor=i:block ]])
 -- custom filetypes
 vim.cmd([[
 augroup custom_filetypes
@@ -56,11 +71,6 @@ augroup END
 
 -- go
 vim.cmd([[
-au FileType go set noexpandtab
-au FileType go set shiftwidth=4
-au FileType go set softtabstop=4
-au FileType go set tabstop=4
-
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_fields = 1
@@ -76,16 +86,6 @@ let g:go_fmt_command = "goimports"
 
 au FileType go nmap <leader>gt :GoDeclsDir<cr>
 ]])
-
--- solidity
-vim.cmd([[
-au FileType solidity set noexpandtab
-au FileType solidity set shiftwidth=4
-au FileType solidity set softtabstop=4
-au FileType solidity set tabstop=4
-]])
--- rustfmt autosave
-vim.cmd([[let g:rustfmt_autosave = 1]])
 
 -- jsdoc
 vim.cmd([[let g:jsdoc_default_mapping = 0]])

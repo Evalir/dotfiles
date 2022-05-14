@@ -4,12 +4,12 @@ end
 
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
-  use 'tomlion/vim-solidity'
   use 'jiangmiao/auto-pairs'
   use 'tpope/vim-surround'
   use "norcalli/nvim.lua"
   use 'preservim/nerdcommenter'
   use 'karb94/neoscroll.nvim'
+
   -- status bar
   use {
     'hoob3rt/lualine.nvim',
@@ -17,7 +17,6 @@ return require('packer').startup(function()
   }
 
   use 'voldikss/vim-floaterm'
-  use { "Lunarvim/Onedarker" }
 
   -- commenting
   use {'winston0410/commented.nvim'}
@@ -30,11 +29,10 @@ return require('packer').startup(function()
   -- coloration
   use 'ishan9299/nvim-solarized-lua'
   use 'liuchengxu/space-vim-dark'
-  use 'monsonjeremy/onedark.nvim'
-  use 'morhetz/gruvbox'
-  use 'norcalli/nvim-colorizer.lua'
   use 'sainnhe/gruvbox-material'
   use "projekt0n/github-nvim-theme"
+  use 'folke/tokyonight.nvim';
+  use 'NTBBloodbath/doom-one.nvim';
   -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
@@ -168,45 +166,35 @@ return require('packer').startup(function()
   use 'gioele/vim-autoswap'
 
   -- everything completion
-  use { 'neoclide/coc.nvim', branch = 'release' }
+  use 'neovim/nvim-lspconfig';
+  use 'onsails/lspkind-nvim';
 
   -- git
   use 'tpope/vim-fugitive'
-  use 'airblade/vim-gitgutter'
+  use {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup()
+    end
+  }
   use 'tpope/vim-rhubarb'
 
   -- debugging
   use 'mfussenegger/nvim-dap'
 
-  -- languages
-  -- rust
+  -- Languages
+  use 'sheerun/vim-polyglot';
+
+  -- Autocomplete
+  use 'hrsh7th/nvim-cmp';
+  use 'hrsh7th/cmp-buffer';
+  use 'hrsh7th/cmp-cmdline';
+  use 'hrsh7th/cmp-nvim-lsp';
+  use 'hrsh7th/cmp-path';
+  use 'saadparwaiz1/cmp_luasnip';
+  use 'L3MON4D3/LuaSnip';
   use 'simrat39/rust-tools.nvim'
-
-  -- md
-  use {
-    'plasticboy/vim-markdown',
-    ft = { 'markdown' },
-    config = function()
-      vim.g.vim_markdown_fenced_languages = {
-        'jsx=javascript', 'ts=typescript', 'tsx=typescript'
-      }
-    end
-  }
-  -- hcl
-  use 'jvirtanen/vim-hcl'
-
-  -- go
-  -- CoC doesn't play nice with it, it seems
+  -- go specific
   use 'fatih/vim-go'
 
-    -- js
-  local jsts = {
-    'javascript', 'javascriptreact', 'typescript', 'typescriptreact'
-  }
-  use { 'jparise/vim-graphql', ft = vim.list_extend(jsts, { 'graphql' }) }
-  use { 'heavenshell/vim-jsdoc', ft = jsts }
-  use { 'jxnblk/vim-mdx-js', ft = jsts }
-  use { 'moll/vim-node', ft = jsts }
-  use { 'posva/vim-vue', ft = { 'vue' } }
-  use { 'evanleck/vim-svelte', branch = 'main', ft = { 'svelte' } }
 end)

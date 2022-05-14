@@ -13,17 +13,8 @@ require'nvim-tree'.setup {
   open_on_setup       = false,
   -- will not open on setup if the filetype is in this list
   ignore_ft_on_setup  = {},
-  -- closes neovim automatically when the tree is the last **WINDOW** in the view
-  auto_close          = false,
   -- opens the tree when changing/opening a new tab if the tree wasn't previously opened
   open_on_tab         = false,
-  -- hijacks new directory buffers when they are opened.
-  update_to_buf_dir   = {
-    -- enable the feature
-    enable = true,
-    -- allow to open the tree if it was previously closed
-    auto_open = true,
-  },
   -- hijack the cursor in the tree to put it at the start of the filename
   hijack_cursor       = false,
   -- updates the root directory of the tree on `DirChanged` (when your run `:cd` usually) 
@@ -52,8 +43,6 @@ require'nvim-tree'.setup {
     width = 30,
     -- side of the tree, can be one of 'left' | 'right' | 'top' | 'bottom'
     side = 'left',
-    -- if true the tree will resize itself after opening a file
-    auto_resize = false,
     mappings = {
       -- custom only false will merge the list with the default mappings
       -- if true, it will only use your list to set the mappings
@@ -75,11 +64,113 @@ t['<C-d>'] = {'scroll', { 'vim.wo.scroll', 'true', '50'}}
 
 require('neoscroll.config').set_mappings(t)
 
-require('colorizer').setup{
-  '*';
-}
-
 vim.cmd([[
   let g:go_doc_keywordprg_enabled = 0
   let g:go_doc_popup_window = 1
+]])
+
+-- lsp config and stuff
+-- autocomplete
+local lspkind = require'lspkind'
+local cmp = require'cmp'
+cmp.setup {
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = {
+    ['<C-w>'] = cmp.mapping(cmp.mapping.scroll_docs(-3), { 'i', 'c' }),
+    ['<C-a>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-y>'] = cmp.config.disable,
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+  }, {
+    { name = 'buffer' },
+  }),
+  formatting = {
+    format = lspkind.cmp_format({with_text = false, maxwidth = 50})
+  }
+}
+
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+
+-- Configure LSP
+local lspconfig = require('lspconfig')
+local caps = require('cmp_nvim_lsp').update_capabilities(
+  vim.lsp.protocol.make_client_capabilities()
+)
+
+lspconfig['eslint'].setup {
+  capabilities = caps
+}
+
+lspconfig['rust_analyzer'].setup {
+  capabilities = caps,
+  settings = {
+    ["rust-analyzer"] = {
+      procMacro = {
+        enable = true
+      },
+    }
+  }
+}
+
+lspconfig['solc'].setup {}
+
+lspconfig['gopls'].setup{
+cmd = {'gopls'},
+  settings = {
+    gopls = {
+      analyses = {
+        nilness = true,
+        unusedparams = true,
+        unusedwrite = true,
+        useany = true,
+      },
+      experimentalPostfixCompletions = true,
+      gofumpt = true,
+      staticcheck = true,
+      usePlaceholders = true,
+    },
+  },
+on_attach = on_attach,
+}
+
+-- actual lsp keybinds
+vim.cmd([[
+nnoremap <silent> <c-]>     <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <c-k>     <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> K         <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gi        <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> gc        <cmd>lua vim.lsp.buf.incoming_calls()<CR>
+nnoremap <silent> gd        <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr        <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> gn        <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> gs        <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gw        <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+  ]])
+
+-- Format on save
+vim.cmd([[
+  autocmd BufWritePre *.rs lua vim.lsp.buf.formatting_sync(nil, 1000)
 ]])
