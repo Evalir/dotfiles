@@ -79,9 +79,13 @@ cmp.setup {
       require('luasnip').lsp_expand(args.body)
     end,
   },
+  window = {
+     completion = cmp.config.window.bordered(),
+     documentation = cmp.config.window.bordered(),
+  },
   mapping = {
-    ['<C-w>'] = cmp.mapping(cmp.mapping.scroll_docs(-3), { 'i', 'c' }),
-    ['<C-a>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
+    ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
     ['<C-y>'] = cmp.config.disable,
     ['<C-e>'] = cmp.mapping({
@@ -135,6 +139,7 @@ lspconfig['rust_analyzer'].setup {
   }
 }
 
+lspconfig['tsserver'].setup {}
 lspconfig['solc'].setup {}
 
 lspconfig['gopls'].setup{
@@ -169,6 +174,24 @@ nnoremap <silent> gn        <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> gs        <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gw        <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
   ]])
+
+-- go
+vim.cmd([[
+let g:go_gopls_enabled = 0
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+let g:go_auto_sameids = 1
+
+let g:go_fmt_command = "goimports"
+
+au FileType go nmap <leader>gt :GoDeclsDir<cr>
+]])
 
 -- Format on save
 vim.cmd([[

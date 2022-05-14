@@ -37,10 +37,6 @@ map('', '<leader>rf', ':RustFmt<cr>')
 -- Floaterm
 map('', '<leader>ft', ':FloatermToggle<cr>')
 
--- Tab switching
-map('', '<C-k>', ':tabnext<cr>')
-map('', '<C-j>', ':tabprev<cr>')
-
 -- JsDoc
 vim.g['jsdoc_default_mapping'] = 0
 map('', '<leader>j', ':JsDoc<cr>')
