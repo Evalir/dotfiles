@@ -72,3 +72,7 @@ augroup END
 
 -- jsdoc
 vim.cmd([[let g:jsdoc_default_mapping = 0]])
+
+-- vgit related
+vim.o.updatetime = 300
+vim.wo.signcolumn = 'yes'

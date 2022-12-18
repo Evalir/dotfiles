@@ -1,6 +1,1 @@
-require('settings')
-require('plugins')
-require('pluginconfig')
-require('fzf')
-require('keybinds')
-require('colors')
+require("evalir")

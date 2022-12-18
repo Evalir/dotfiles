@@ -1,0 +1,8 @@
+require("evalir.macOS.after.telescope")
+require("evalir.macOS.after.treesitter")
+require("evalir.macOS.after.lsp-zero")
+require("evalir.macOS.after.nvim-tree")
+require("evalir.macOS.after.fidget")
+require("evalir.macOS.after.trouble")
+require("evalir.macOS.after.vgit")
+require("evalir.macOS.after.lualine")
