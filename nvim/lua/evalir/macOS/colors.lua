@@ -1,5 +1,5 @@
 function ColorBg(color)
-  color = color or "github_dark_default"
+  color = color or "oxocarbon"
   vim.cmd.colorscheme(color)
 end
 
