@@ -1,6 +1,0 @@
-require("evalir.macOS.plugins")
-require("evalir.macOS.after")
-require("evalir.macOS.colors")
-require("evalir.macOS.settings")
-require("evalir.macOS.keybinds")
-print("evalir macOS config sourced")
