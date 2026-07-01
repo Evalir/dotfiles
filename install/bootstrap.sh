@@ -13,8 +13,9 @@
 set -euo pipefail
 
 # Core deps referenced by the fish config and the tmux `s` workflow.
-# (rust/cargo, bun, zvm are heavier dev toolchains — install those yourself.)
-PKGS=(fish neovim tmux mosh eza git curl)
+# (fish itself is assumed to be installed already; rust/cargo, bun, zvm are
+# heavier dev toolchains — install those yourself.)
+PKGS=(neovim tmux mosh eza git curl)
 
 # Root doesn't need sudo; otherwise use it if present.
 if [ "$(id -u)" -eq 0 ]; then
