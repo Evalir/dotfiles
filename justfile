@@ -1,4 +1,10 @@
-# Install everything
+# Non-destructive install: symlink configs into place, backing up anything
+# that already exists. Fish is layered in additively (conf.d + functions), so
+# an existing config.fish is left untouched. Safe to re-run.
+link:
+    bash ./install/link.sh
+
+# Install everything (destructive copy — overwrites ~/.config/nvim & fish)
 install-all: fishrc nvim
 
 # Install the `.fishrc` config
