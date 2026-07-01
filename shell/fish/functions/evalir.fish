@@ -12,7 +12,11 @@ function ferris
 end
 
 function gorris
-    command cargo clippy --fix --all-features --allow-dirty --allow-staged && cargo fmt $argv
+    command cargo clippy --fix --all-features --allow-dirty --allow-staged && cargo +nightly fmt $argv
+end
+
+function ultraclaude
+    command claude --dangerously-skip--permissions $argv
 end
 
 function rclip
@@ -30,7 +34,7 @@ end
 
 # quick git log with no page
 function glog
-  command git --no-pager log --oneline -50 $argv
+  command git --no-pager log --oneline -50 --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cI) %C(bold blue)<%an>%Creset' $argv
 end
 
 # Fancier git log
@@ -45,4 +49,18 @@ end
 
 function gp
     command git push $argv
+end
+
+# mosh straight into the homelab box.
+# bare `normandy` -> plain login shell
+# `normandy <session>` or `normandy -s <session>` -> run `s <session>` on the box
+function normandy
+    if test (count $argv) -eq 0
+        command mosh normandy@normandy
+    else
+        if test "$argv[1]" = "-s"
+            set -e argv[1]
+        end
+        command mosh normandy@normandy -- s $argv
+    end
 end

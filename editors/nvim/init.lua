@@ -82,7 +82,9 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagn
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- File browser keymaps
-vim.keymap.set('n', '<C-b>', ':Telescope file_browser<CR>', { desc = 'Open file [B]rowser' })
+vim.keymap.set('n', '<leader>fb>', ':Telescope file_browser<CR>', { desc = 'Open file [B]rowser' })
+vim.keymap.set('n', '<leader>ff', ':Telescope find_files<CR>', { desc = '[F]ind files' })
+vim.keymap.set('n', '<leader>fg>', ':Telescope live_grep<CR>', { desc = 'Live [G]rep' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -175,6 +177,29 @@ require('lazy').setup({
     },
   },
 
+  -- copilot, obviously
+  'github/copilot.vim',
+
+  -- nvim orgmode!
+  {
+    'nvim-orgmode/orgmode',
+    event = 'VeryLazy',
+    ft = { 'org' },
+    config = function()
+      -- Setup orgmode
+      require('orgmode').setup {
+        org_agenda_files = '~/orgfiles/**/*',
+        org_default_notes_file = '~/orgfiles/refile.org',
+      }
+
+      -- NOTE: If you are using nvim-treesitter with ~ensure_installed = "all"~ option
+      -- add ~org~ to ignore_install
+      -- require('nvim-treesitter.configs').setup({
+      --   ensure_installed = 'all',
+      --   ignore_install = { 'org' },
+      -- })
+    end,
+  },
   -- NOTE: Plugins can also be configured to run lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
@@ -198,11 +223,16 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').register {
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        { '<leader>c', group = '[C]ode' },
+        { '<leader>c_', hidden = true },
+        { '<leader>d', group = '[D]ocument' },
+        { '<leader>d_', hidden = true },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>r_', hidden = true },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>s_', hidden = true },
+        { '<leader>w', group = '[W]orkspace' },
+        { '<leader>w_', hidden = true },
       }
     end,
   },
@@ -334,6 +364,9 @@ require('lazy').setup({
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
+    },
+    opts = {
+      inlay_hints = { enabled = true, prefix = ' » ' },
     },
     config = function()
       -- Brief Aside: **What is LSP?**
@@ -647,22 +680,34 @@ require('lazy').setup({
     end,
   },
 
-  { -- Gruvbox!
-    'ellisonleao/gruvbox.nvim',
-    priority = 999,
+  --
+  -- Varios themes
+  --
+
+  {
+    'rrethy/base16-nvim',
+    lazy = false,
+    priority = 1000,
     init = function()
-      vim.cmd.colorscheme 'gruvbox'
+      vim.cmd [[ set termguicolors ]]
+      vim.cmd.colorscheme 'base16-tomorrow-night'
     end,
   },
 
-  { -- base16, tons of themes
-    'RRethy/base16-nvim',
-    priority = 1000,
-    init = function()
-      vim.cmd.colorscheme 'base16-gruvbox-dark-hard'
-      vim.o.background = 'dark'
-    end,
+  'rktjmp/lush.nvim',
+  'ViViDboarder/wombat.nvim',
+  'Evalir/dosbox-vim-colorscheme',
+  'p00f/alabaster.nvim',
+
+  {
+    'kvrohit/rasmus.nvim',
   },
+
+  {
+    'nvim-lua/plenary.nvim',
+  },
+
+  { 'ntk148v/komau.vim' },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -703,6 +748,25 @@ require('lazy').setup({
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
+  },
+
+  { 'xolox/vim-misc' },
+
+  {
+    'xolox/vim-notes',
+    dependencies = { 'xolox/vim-misc' },
+    config = function()
+      vim.g.notes_directory = '~/evalir/notes'
+      vim.g.notes_suffix = '.md'
+      vim.g.notes_date_format = '%Y-%m-%d %H:%M:%S'
+    end,
+  },
+
+  {
+    'nvim-tree/nvim-tree.lua',
+    requires = {
+      'nvim-tree/nvim-web-devicons', -- optional
+    },
   },
 
   { -- Highlight, edit, and navigate code

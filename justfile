@@ -21,3 +21,9 @@ senv:
     rm -rf ./editors/nvim/.git
     rm -rf ./editors/nvim/.github
     rm -rf ./editors/nvim/doc
+
+# update usual programs
+gm:
+    rustup update
+    rustup update nightly
+    foundryup
