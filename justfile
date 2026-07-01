@@ -1,8 +1,8 @@
 # Full setup on a fresh box: install prerequisites, then symlink configs.
 setup: bootstrap link
 
-# Install prerequisite packages (neovim, tmux, mosh, eza, starship, ...).
-# Assumes fish is already installed. Auto-detects brew/apt/dnf/pacman. Re-runnable.
+# Install prerequisite packages (neovim, mosh, eza, starship). Assumes the
+# basics (fish, git, curl, tmux). Auto-detects brew/apt/dnf/pacman. Re-runnable.
 bootstrap:
     bash ./install/bootstrap.sh
 

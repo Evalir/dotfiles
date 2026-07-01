@@ -15,7 +15,7 @@ just setup         # bootstrap (install prereqs) + link
 Or run the two steps individually:
 
 ```sh
-just bootstrap     # install neovim, tmux, mosh, eza, starship, ... (assumes fish)
+just bootstrap     # install neovim, mosh, eza, starship (assumes fish/git/curl/tmux)
 just link          # symlink configs into ~/.config
 ```
 
