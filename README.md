@@ -9,8 +9,19 @@ Non-destructive, symlink-based. Clone the repo, then:
 ```sh
 git clone git@github.com:Evalir/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-just link          # or: bash install/link.sh
+just setup         # bootstrap (install prereqs) + link
 ```
+
+Or run the two steps individually:
+
+```sh
+just bootstrap     # install fish, neovim, tmux, mosh, eza, starship, ...
+just link          # symlink configs into ~/.config
+```
+
+`bootstrap` auto-detects the package manager (brew / apt / dnf / pacman) and
+installs prerequisites; a package that isn't available (e.g. `eza` on older
+Debian) is reported rather than aborting the run.
 
 `link` symlinks the tracked configs into `~/.config`:
 

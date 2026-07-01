@@ -1,3 +1,11 @@
+# Full setup on a fresh box: install prerequisites, then symlink configs.
+setup: bootstrap link
+
+# Install prerequisite packages (fish, neovim, tmux, mosh, eza, starship, ...).
+# Auto-detects brew/apt/dnf/pacman. Safe to re-run.
+bootstrap:
+    bash ./install/bootstrap.sh
+
 # Non-destructive install: symlink configs into place, backing up anything
 # that already exists. Fish is layered in additively (conf.d + functions), so
 # an existing config.fish is left untouched. Safe to re-run.
