@@ -76,15 +76,19 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- File browser keymaps
-vim.keymap.set('n', '<leader>fb>', ':Telescope file_browser<CR>', { desc = 'Open file [B]rowser' })
+vim.keymap.set('n', '<leader>fb', ':Telescope file_browser<CR>', { desc = 'Open file [B]rowser' })
 vim.keymap.set('n', '<leader>ff', ':Telescope find_files<CR>', { desc = '[F]ind files' })
-vim.keymap.set('n', '<leader>fg>', ':Telescope live_grep<CR>', { desc = 'Live [G]rep' })
+vim.keymap.set('n', '<leader>fg', ':Telescope live_grep<CR>', { desc = 'Live [G]rep' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -119,14 +123,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
   vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
@@ -222,7 +226,7 @@ require('lazy').setup({
       require('which-key').setup()
 
       -- Document existing key chains
-      require('which-key').register {
+      require('which-key').add {
         { '<leader>c', group = '[C]ode' },
         { '<leader>c_', hidden = true },
         { '<leader>d', group = '[D]ocument' },
@@ -361,9 +365,18 @@ require('lazy').setup({
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
-      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-      -- used for completion, annotations and signatures of Neovim apis
-      { 'folke/neodev.nvim', opts = {} },
+      -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+      -- used for completion, annotations and signatures of Neovim apis.
+      -- (Replaces the now-archived `neodev.nvim`.)
+      {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = {
+          library = {
+            { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+          },
+        },
+      },
     },
     opts = {
       inlay_hints = { enabled = true, prefix = ' » ' },
@@ -672,6 +685,7 @@ require('lazy').setup({
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
+          { name = 'lazydev', group_index = 0 }, -- set group_index 0 to skip loading LuaLS completions
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
@@ -701,10 +715,6 @@ require('lazy').setup({
 
   {
     'kvrohit/rasmus.nvim',
-  },
-
-  {
-    'nvim-lua/plenary.nvim',
   },
 
   { 'ntk148v/komau.vim' },
@@ -764,9 +774,13 @@ require('lazy').setup({
 
   {
     'nvim-tree/nvim-tree.lua',
-    requires = {
+    dependencies = {
       'nvim-tree/nvim-web-devicons', -- optional
     },
+    config = function()
+      require('nvim-tree').setup()
+      vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<CR>', { desc = '[T]oggle file [T]ree' })
+    end,
   },
 
   { -- Highlight, edit, and navigate code
