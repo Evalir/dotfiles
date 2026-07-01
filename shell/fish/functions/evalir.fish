@@ -64,3 +64,8 @@ function normandy
         command mosh normandy@normandy -- s $argv
     end
 end
+
+# short alias for normandy
+function nmd
+    normandy $argv
+end
