@@ -1,9 +1,18 @@
-function ls
-    command eza $argv
-end
+# eza-backed ls, but only when eza is actually installed. bootstrap tolerates a
+# missing eza (it isn't packaged on older Debian), and shadowing `ls`
+# unconditionally would break it shell-wide on exactly those boxes.
+if type -q eza
+    function ls
+        command eza $argv
+    end
 
-function ll
-    command eza -l -b $argv
+    function ll
+        command eza -l -b $argv
+    end
+else
+    function ll
+        command ls -l $argv
+    end
 end
 
 # Cleans up a rust project using clippy nightly and all unstable options.
@@ -16,7 +25,7 @@ function gorris
 end
 
 function ultraclaude
-    command claude --dangerously-skip--permissions $argv
+    command claude --dangerously-skip-permissions $argv
 end
 
 function rclip

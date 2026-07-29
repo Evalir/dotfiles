@@ -35,7 +35,11 @@ Anything already at a target path is moved aside to a timestamped
 targets already pointing at the repo are left alone. Because it's symlinks, a
 later `git pull` updates every linked machine.
 
-## Sync changes back
+## Making changes
 
-`just senv` copies the live `~/.config` fish/nvim into the repo (use when a
-machine isn't symlinked to it).
+Edit the files in this repo directly — on a linked machine that *is* the live
+config. Commit and push, then `git pull` on the other boxes.
+
+If a machine was set up by hand and isn't linked yet, run `just link`: the
+existing config is backed up to `*.bak.<date>` first, so you can pull anything
+worth keeping out of the backup and into the repo before deleting it.
