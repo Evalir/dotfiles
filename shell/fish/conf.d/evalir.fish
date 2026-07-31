@@ -22,6 +22,31 @@ fish_add_path ~/.sp1/bin
 fish_add_path ~/.bifrost/bin
 set -gx ZIG_INSTALL ~/.zvm/self
 
+# Forwarded ssh agent + long-lived tmux sessions.
+#
+# On a box that deliberately holds no private key (git authenticates through the agent
+# forwarded from the laptop), every reconnect gets a NEW socket path like
+# /tmp/auth-agentXXXX/listener.sock. A tmux session created under an earlier connection
+# keeps the old path in its environment, so after reattaching, git fails with an
+# unreachable agent. Fix: keep one stable path, repoint it on each fresh login, and have
+# shells use it — sessions inside tmux then follow the live socket automatically.
+#
+# Guarded on SSH_CONNECTION so a local machine's own agent (1Password et al.) is untouched.
+if set -q SSH_CONNECTION
+    set -l stable $HOME/.ssh/agent.sock
+
+    # A real forwarded socket (not our own symlink) -> repoint the stable path at it.
+    if set -q SSH_AUTH_SOCK; and test "$SSH_AUTH_SOCK" != "$stable"; and test -S "$SSH_AUTH_SOCK"
+        mkdir -p $HOME/.ssh
+        ln -sf "$SSH_AUTH_SOCK" "$stable"
+    end
+
+    # `test -S` follows the link, so a stale one (dead target) fails here and is ignored.
+    if test -S "$stable"
+        set -gx SSH_AUTH_SOCK "$stable"
+    end
+end
+
 # Prompt — only if starship is actually installed on this box.
 if status is-interactive
     if type -q starship
