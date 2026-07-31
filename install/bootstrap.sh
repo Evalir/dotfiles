@@ -14,8 +14,10 @@ set -euo pipefail
 
 # The less-obvious deps referenced by the configs. Assumes the basics (fish,
 # git, curl, tmux) are already present; rust/cargo, bun, zvm are heavier dev
-# toolchains you install yourself.
-PKGS=(neovim mosh eza)
+# toolchains you install yourself. zellij backs the `zj` helper and isn't
+# packaged on Debian — it lands in the failed list there, and `zj` simply isn't
+# defined on boxes without it.
+PKGS=(neovim mosh eza zellij)
 
 # Root doesn't need sudo; otherwise use it if present.
 if [ "$(id -u)" -eq 0 ]; then

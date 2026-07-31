@@ -22,9 +22,12 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 # layered on top of any existing config.fish) and the function bundle in
 # functions/. The machine's own config.fish is never touched. nvim is a whole
 # config, so its dir is symlinked as a unit (existing one is backed up first).
+# tmux.conf goes to the XDG path (tmux >= 3.1); on a Nix box, drop
+# `programs.tmux` from home-manager first so the two don't fight over it.
 MAPPINGS=(
     "shell/fish/conf.d/evalir.fish|$CONFIG_HOME/fish/conf.d/evalir.fish"
     "shell/fish/functions/evalir.fish|$CONFIG_HOME/fish/functions/evalir.fish"
+    "shell/tmux/tmux.conf|$CONFIG_HOME/tmux/tmux.conf"
     "editors/nvim|$CONFIG_HOME/nvim"
 )
 
