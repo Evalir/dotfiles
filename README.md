@@ -45,6 +45,7 @@ survives a dropped connection. The fish bundle carries the helpers:
 | command | what |
 |---|---|
 | `s [name]`  | attach or create a **tmux** session (default `main`) |
+| `s -k [name]` | kill a work group + everything in it; no name → fzf picker |
 | `zj [name]` | attach or create a **zellij** session (default `main`, only if zellij is installed) |
 | `sls`       | list active tmux + zellij sessions |
 | `normandy` / `nmd` | mosh to the Asahi box; `normandy <session>` lands straight in `s <session>` |

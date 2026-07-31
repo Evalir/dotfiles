@@ -66,11 +66,52 @@ end
 # live in normandy's home-manager config, which meant only that one box had
 # them — they're portable fish, so they belong here where every box gets them.
 #
-#   s [name]   attach or create a tmux session   (default: main)
-#   zj [name]  attach or create a zellij session (default: main)
-#   sls        list active tmux + zellij sessions
+#   s [name]    attach or create a tmux session   (default: main)
+#   s -k [name] kill a work group + everything in it (no name → fzf picker)
+#   zj [name]   attach or create a zellij session (default: main)
+#   sls         list active tmux + zellij sessions
 
 function s
+    # -k / --kill: tear down an entire work group — the base session AND every throwaway
+    # client session grouped with it — so nothing (e.g. a live claude) is left running.
+    if contains -- "$argv[1]" -k --kill
+        set -e argv[1]
+        set -l grps $argv
+        if test -z "$grps"
+            # No name → pick group(s) from an fzf list; the selection IS the confirmation.
+            # fzf is a hard dependency only on this path, so fail with advice rather than
+            # a "command not found" on a box that doesn't have it.
+            if not type -q fzf
+                echo 's -k with no name needs fzf; pass a group name explicitly' >&2
+                return 1
+            end
+            set -l groups (tmux list-sessions -F '#{session_group}' 2>/dev/null | sort -u)
+            test -z "$groups"; and echo 'no active sessions' >&2; and return
+            set grps (printf '%s\n' $groups | fzf --multi --reverse --height 40% \
+                        --prompt 'kill group> ' --header 'TAB mark · ENTER kill · ESC cancel')
+            test -z "$grps"; and return # cancelled / nothing chosen
+        end
+        for g in $grps
+            # Every session in the group shares #{session_group} == $g (the base session $g
+            # plus its $g-N client sessions). Killing only the base would orphan the clients
+            # and their windows, so kill each session whose group matches. Session names can't
+            # contain ':', so it's a safe delimiter for splitting group from name.
+            set -l killed 0
+            for line in (tmux list-sessions -F '#{session_group}:#{session_name}' 2>/dev/null)
+                set -l parts (string split -m1 ':' $line)
+                if test "$parts[1]" = "$g"
+                    tmux kill-session -t "=$parts[2]" 2>/dev/null; and set killed (math $killed + 1)
+                end
+            end
+            if test $killed -gt 0
+                echo "killed group '$g' ($killed sessions)"
+            else
+                echo "no such group: '$g'" >&2
+            end
+        end
+        return
+    end
+
     set -l grp $argv[1]
     test -z "$grp"; and set grp main
     # `grp` is a shared "work group" whose windows/panes persist. Each client attaches via

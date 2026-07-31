@@ -17,7 +17,7 @@ set -euo pipefail
 # toolchains you install yourself. zellij backs the `zj` helper and isn't
 # packaged on Debian — it lands in the failed list there, and `zj` simply isn't
 # defined on boxes without it.
-PKGS=(neovim mosh eza zellij)
+PKGS=(neovim mosh eza zellij fzf)
 
 # Root doesn't need sudo; otherwise use it if present.
 if [ "$(id -u)" -eq 0 ]; then
