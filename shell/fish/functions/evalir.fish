@@ -60,21 +60,80 @@ function gp
     command git push $argv
 end
 
-# mosh straight into the homelab box.
-# bare `normandy` -> plain login shell
-# `normandy <session>` or `normandy -s <session>` -> run `s <session>` on the box
-function normandy
+# ── durable remote sessions ───────────────────────────────────────────────────
+# Run claude (or anything) INSIDE a session so it survives disconnects; the
+# session's root is a shell, so quitting claude doesn't kill it. These used to
+# live in normandy's home-manager config, which meant only that one box had
+# them — they're portable fish, so they belong here where every box gets them.
+#
+#   s [name]   attach or create a tmux session   (default: main)
+#   zj [name]  attach or create a zellij session (default: main)
+#   sls        list active tmux + zellij sessions
+
+function s
+    set -l grp $argv[1]
+    test -z "$grp"; and set grp main
+    # `grp` is a shared "work group" whose windows/panes persist. Each client attaches via
+    # its OWN throwaway session grouped with it (tmux session groups), so window selection
+    # and size are INDEPENDENT — navigating or resizing in one ssh session doesn't control
+    # the others. The per-client session self-destroys on detach; the group's windows (and
+    # whatever's running in them) live on in the base session.
+    tmux has-session -t "=$grp" 2>/dev/null; or tmux new-session -ds $grp
+    tmux new-session -t $grp \; set-option destroy-unattached on
+end
+
+# zellij isn't packaged on Debian, so guard rather than defining a broken `zj`.
+if type -q zellij
+    function zj
+        set -l name $argv[1]
+        test -z "$name"; and set name main
+        zellij attach --create $name
+    end
+end
+
+function sls
+    echo '── tmux ──'
+    tmux ls 2>/dev/null; or echo '  (no tmux sessions)'
+    if type -q zellij
+        echo '── zellij ──'
+        zellij list-sessions 2>/dev/null; or echo '  (no zellij sessions)'
+    end
+end
+
+# ── hopping between boxes ─────────────────────────────────────────────────────
+# mosh into a dev box, optionally straight into a session.
+#   <box>              -> plain login shell
+#   <box> <session>    -> run `s <session>` on the box
+#   <box> -s <session> -> same
+function __evalir_box_session
+    set -l target $argv[1]
+    set -e argv[1]
+
     if test (count $argv) -eq 0
-        command mosh normandy@normandy
+        command mosh $target
     else
         if test "$argv[1]" = "-s"
             set -e argv[1]
         end
-        command mosh normandy@normandy -- s $argv
+        command mosh $target -- s $argv
     end
 end
 
-# short alias for normandy
+# The Fedora Asahi box (M2 Air). Login user differs from the local one, so it's explicit.
+function normandy
+    __evalir_box_session normandy@normandy $argv
+end
+
 function nmd
     normandy $argv
+end
+
+# The Debian GPU box. No user prefix — set `User` for it in ~/.ssh/config if the
+# remote login name isn't the same as the local one.
+function swanbots
+    __evalir_box_session swanbots $argv
+end
+
+function swb
+    swanbots $argv
 end
