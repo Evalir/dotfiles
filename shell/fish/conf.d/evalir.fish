@@ -14,6 +14,9 @@ end
 
 # Dev toolchains on PATH. fish_add_path is idempotent and harmless if the dir
 # doesn't exist yet, so this is safe to run on any box.
+# ~/.local/bin: the curl-installed `claude`, pipx/uv shims, and the fd/bat name shims
+# devenv.sh drops there on Debian (where the packages are fdfind/batcat).
+fish_add_path ~/.local/bin
 fish_add_path ~/.cargo/bin
 fish_add_path ~/.zvm/bin
 fish_add_path ~/.zvm/self
