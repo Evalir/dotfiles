@@ -37,6 +37,41 @@ Anything already at a target path is moved aside to a timestamped
 targets already pointing at the repo are left alone. Because it's symlinks, a
 later `git pull` updates every linked machine.
 
+## Dev environment (without Nix)
+
+`just devenv` installs the fuller toolset — the portable equivalent of what
+[normandy](https://github.com/Pendrana-Systems/Normandy)'s home-manager config
+provides, for boxes that don't run Nix:
+
+| group | tools |
+|---|---|
+| `cli` | ripgrep · fd · fzf · jq · bat · eza · tree · htop · git-lfs |
+| `lang` | rustup · node · go · python3 |
+| `build` | gcc · make · pkg-config |
+
+```sh
+just devenv                # everything
+just devenv cli            # one group
+just devenv "lang build"   # several
+```
+
+Same conventions as `bootstrap`: auto-detects brew / apt / dnf / pacman,
+skips anything already on PATH (so a `cargo install`ed or hand-built copy is
+never clobbered), and reports unavailable packages at the end instead of
+aborting. It ends with a version table so you can see what actually landed.
+
+Two things it handles that bite otherwise:
+
+- **rustup always comes from rustup.rs**, never the package manager — distro
+  rustup packages are often stale or bound to a distro-managed toolchain that
+  then fights `rustup update`.
+- **Debian renames `fd` and `bat`** to `fdfind` and `batcat` (binary name
+  collisions). The script symlinks them back to the real names in
+  `~/.local/bin`, which `conf.d/evalir.fish` puts on `$PATH`.
+
+The k3s tooling (kubectl/helm/k9s/kubeseal) and `nmtop` are deliberately left
+out — those only make sense on the box running that cluster.
+
 ## Durable remote sessions
 
 Headless boxes run long jobs and Claude Code inside a multiplexer, so work
