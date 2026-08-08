@@ -75,7 +75,11 @@ done
 if ! command -v starship >/dev/null 2>&1; then
     echo "==> starship (via official installer)"
     if command -v curl >/dev/null 2>&1; then
-        curl -sS https://starship.rs/install/install.sh | $SUDO sh -s -- -y \
+        # -f is load-bearing, not style: without it curl happily pipes an HTTP error
+        # BODY into `sudo sh`. This URL was previously .../install/install.sh, which 404s
+        # with a 34KB HTML page — dash then died on "Syntax error: newline unexpected"
+        # after executing whatever prefix of the page parsed. -L follows redirects.
+        curl -fsSL https://starship.rs/install.sh | $SUDO sh -s -- -y \
             || failed+=("starship")
     else
         failed+=("starship")
