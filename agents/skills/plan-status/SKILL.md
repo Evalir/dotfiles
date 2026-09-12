@@ -68,6 +68,17 @@ for `plan-sync` to clean up. Do not remove them here.
 Rewrite the tables in `.claude/plans/README.md` from what you found. Tables only —
 do not add prose to the index.
 
+## Commit the plans repo
+
+The tree lives in a repo so other machines and cloud sessions can read it. Push what
+changed; skip when nothing did.
+
+```bash
+PLANS=$(git -C "$(readlink .claude/plans 2>/dev/null || pwd)" rev-parse --show-toplevel)
+git -C "$PLANS" add -A
+git -C "$PLANS" diff --quiet --cached || { git -C "$PLANS" commit -q -m "status: <repo> <date>"; git -C "$PLANS" push -q; }
+```
+
 ## Report style
 
 Short sentences. A table when there are more than three rows in a section. No

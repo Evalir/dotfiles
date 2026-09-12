@@ -1,52 +1,43 @@
 ---
 name: plan-init
-description: One-time setup of the .claude/plans/ tree in the current repo, gitignored, with its README index. Use when a repo has no plans folder yet and the user wants to start tracking plans there.
+description: Connect the current code repo to the plans repo — clone Evalir/plans if needed, create this repo's tree in it, and mount it at .claude/plans. Use when a repo has no plans link yet and the user wants to start tracking plans for it.
 ---
 
 # plan-init
 
-Create the plan tree in **this** repo. Run once per repo. Read `plan-spec` first.
+Connect **this** code repo to the plans repo. Run once per repo, per machine. Read
+`plan-spec` first.
 
 ## Check first
 
 ```bash
 git rev-parse --show-toplevel
-ls .claude/plans 2>/dev/null
+ls -la .claude/plans 2>/dev/null
 ```
 
-If `.claude/plans/` already exists, stop and say so. Do not overwrite an index that
-has entries in it.
+If `.claude/plans` already exists — as a link or a directory — stop and say so. Never
+replace it.
 
-## Create
+## The plans repo
 
 ```bash
-mkdir -p .claude/plans/{drafts,next,open,done,discarded}
+PLANS=~/dev/evalir/plans
+[ -d "$PLANS/.git" ] || gh repo clone Evalir/plans "$PLANS"
+git -C "$PLANS" pull -q --ff-only
 ```
 
-Git will not track empty directories, and the tree is gitignored anyway, so no
-`.gitkeep` files. Do not add any.
+## This repo's tree
 
-## Gitignore
-
-Plans are working state, not documentation. They do not get committed.
-
-Append to `.gitignore`, only the lines not already present:
-
-```
-.claude/plans/
-.claude/settings.local.json
+```bash
+REPO=$(basename "$(git rev-parse --show-toplevel)")
+mkdir -p "$PLANS/$REPO"/{drafts,next,open,done,discarded}
 ```
 
-Check each with `grep -q '^<line>$' .gitignore` first. Leave the rest of the file alone.
-Do **not** ignore `.claude/` wholesale — `.claude/skills/` is often tracked and
-referenced from the repo's `AGENTS.md`.
-
-## The index
-
-Write `.claude/plans/README.md`:
+If `$PLANS/$REPO` already has plans in it — another machine set it up — keep them and
+skip to the link. Otherwise write `$PLANS/$REPO/README.md`:
 
 ```markdown
-# Plans
+# <repo>
 
 `plan-status` regenerates the tables below. Do not hand-edit them.
 
@@ -71,19 +62,44 @@ Write `.claude/plans/README.md`:
 |---|---|
 ```
 
-## Report
+Git does not track empty directories; that is fine. `plan-add` writes the first file.
 
-Print the tree and the next step:
+## The link
 
 ```bash
-find .claude/plans -type d | sort
+mkdir -p .claude
+ln -s "$PLANS/$REPO" .claude/plans
 ```
 
-Then tell the user: capture an idea with `plan-add`. Nothing else to do.
+## Ignore it, per clone
+
+The link is this machine's, not the project's, so it goes in `.git/info/exclude` — the
+same place the harness puts its own worktree excludes — never in the tracked
+`.gitignore`. A `.gitignore` line ending in `/` matches only a directory, not a symlink,
+so an existing `.claude/plans/` entry does not cover the link.
+
+```bash
+git check-ignore -q .claude/plans     || echo '.claude/plans'      >> .git/info/exclude
+git check-ignore -q .claude/worktrees || echo '.claude/worktrees/' >> .git/info/exclude
+git status --short .claude            # must print nothing
+```
+
+## Commit the plans repo
+
+```bash
+git -C "$PLANS" add "$REPO"
+git -C "$PLANS" commit -q -m "Add $REPO"
+git -C "$PLANS" push -q
+```
+
+Skip the commit if nothing changed — the tree already existed.
+
+## Report
+
+The link, the tree, and the next step: capture an idea with `plan-add`. Nothing else.
 
 ## Do not
 
-- Do not commit anything. The `.gitignore` lines are the user's to commit when they
-  choose.
-- Do not create a plan tree outside a git repo.
+- Do not touch tracked files in the code repo. This skill commits nothing there.
+- Do not create a tree for a directory that is not a git repo.
 - Do not scan the repo for work to seed the tree with. It starts empty.

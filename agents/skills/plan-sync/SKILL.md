@@ -88,6 +88,17 @@ git checkout main && git pull --ff-only origin main
 
 Regenerate `.claude/plans/README.md` tables.
 
+## Commit the plans repo
+
+The tree lives in a repo so other machines and cloud sessions can read it. Push what
+changed; skip when nothing did.
+
+```bash
+PLANS=$(git -C "$(readlink .claude/plans 2>/dev/null || pwd)" rev-parse --show-toplevel)
+git -C "$PLANS" add -A
+git -C "$PLANS" diff --quiet --cached || { git -C "$PLANS" commit -q -m "sync: <repo> — <what moved>"; git -C "$PLANS" push -q; }
+```
+
 ## Report
 
 What moved, what was cleaned, and anything that did not match its plan. The mismatches

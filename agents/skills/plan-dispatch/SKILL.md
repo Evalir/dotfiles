@@ -13,6 +13,18 @@ Turn a plan in `next/` into a worktree and a PR. Read `plan-spec` first.
 - The user has not approved it in this conversation or an earlier one.
 - `blocked-by:` names a PR that has not merged. Say which, and stop.
 
+## Target
+
+**local** — the default; everything below.
+
+**cloud** — a Cursor Cloud Agent or a Claude Code cloud session. It clones the repo and
+sees neither your home directory nor the plans repo, so it gets **the plan body as its
+entire task**: Problem, Change, Checks, Verify live, Not in this PR, verbatim. Skip the
+worktree; leave `worktree:` blank. Start it the way that harness starts a cloud agent.
+When its PR opens, record `branch:` and `pr:`, and keep the PR a **draft**: the sandbox
+cannot run `## Verify live`, so that box is yours. From there `plan-status` treats it
+like any other open plan.
+
 ## Update main
 
 Not optional, and not once per session — once per dispatch.
