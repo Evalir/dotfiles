@@ -34,7 +34,10 @@ Debian, `zellij` on any Debian) is reported rather than aborting the run.
 - **agent skills** — `agents/skills` -> `~/.agents/skills` (the canonical,
   harness-neutral copy), and each skill linked into `~/.cursor/skills`,
   `~/.claude/skills` and `~/.codex/skills` for whichever of those is installed.
-  Edit in the repo; every harness sees it.
+  Edit in the repo; every harness sees it. For a repo that cloud agents work
+  in, `bash install/agent-skills.sh <checkout>` vendors them into its
+  `.claude/skills/` as tracked project skills instead — a cloud sandbox clones
+  the repo and never sees this home directory.
 
 Anything already at a target path is moved aside to a timestamped
 `*.bak.<date>` before linking, so nothing is clobbered. It's safe to re-run:
