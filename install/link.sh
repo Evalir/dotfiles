@@ -24,11 +24,14 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 # config, so its dir is symlinked as a unit (existing one is backed up first).
 # tmux.conf goes to the XDG path (tmux >= 3.1); on a Nix box, drop
 # `programs.tmux` from home-manager first so the two don't fight over it.
+# agents/skills is the harness-neutral home of the agent skills; each harness is
+# then pointed at it below, so one edit in the repo reaches all of them.
 MAPPINGS=(
     "shell/fish/conf.d/evalir.fish|$CONFIG_HOME/fish/conf.d/evalir.fish"
     "shell/fish/functions/evalir.fish|$CONFIG_HOME/fish/functions/evalir.fish"
     "shell/tmux/tmux.conf|$CONFIG_HOME/tmux/tmux.conf"
     "editors/nvim|$CONFIG_HOME/nvim"
+    "agents/skills|$HOME/.agents/skills"
 )
 
 link_one() {
@@ -68,6 +71,20 @@ echo "Config home: $CONFIG_HOME"
 echo
 for m in "${MAPPINGS[@]}"; do
     link_one "${m%%|*}" "${m#*|}"
+done
+
+# Every harness reads its own personal skills folder, so each skill is linked into
+# each of them as well — but only where that harness is installed (its dotdir
+# exists), so a box without Codex doesn't grow an empty ~/.codex.
+HARNESS_SKILL_DIRS=("$HOME/.cursor/skills" "$HOME/.claude/skills" "$HOME/.codex/skills")
+echo
+echo "Linking agent skills into installed harnesses"
+for skill in "$REPO_ROOT"/agents/skills/*/; do
+    name="$(basename "$skill")"
+    for dir in "${HARNESS_SKILL_DIRS[@]}"; do
+        [ -d "$(dirname "$dir")" ] || continue
+        link_one "agents/skills/$name" "$dir/$name"
+    done
 done
 echo
 echo "Done. Backups (if any) are alongside each target as *.bak.$STAMP"
