@@ -90,11 +90,13 @@ Regenerate `.claude/plans/README.md` tables.
 
 ## Commit the plans repo
 
-The tree lives in a repo so other machines and cloud sessions can read it. Push what
-changed; skip when nothing did.
+The tree lives in `Evalir/plans` so other machines and cloud sessions can read it. Push
+what changed; skip when nothing did. The remote check is not optional: without the mount,
+`$PLANS` would resolve to the code repo, and `add -A` there would commit your working tree.
 
 ```bash
-PLANS=$(git -C "$(readlink .claude/plans 2>/dev/null || pwd)" rev-parse --show-toplevel)
+PLANS=$(git -C "$(readlink .claude/plans 2>/dev/null || echo .)" rev-parse --show-toplevel)
+git -C "$PLANS" remote get-url origin | grep -q 'Evalir/plans' || { echo "not Evalir/plans: $PLANS"; exit 1; }
 git -C "$PLANS" add -A
 git -C "$PLANS" diff --quiet --cached || { git -C "$PLANS" commit -q -m "sync: <repo> — <what moved>"; git -C "$PLANS" push -q; }
 ```

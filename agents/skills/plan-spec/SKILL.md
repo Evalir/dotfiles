@@ -40,11 +40,17 @@ session read it. `plan-status` and `plan-sync` end by committing and pushing it.
 
 ## Where you are
 
-- **Inside a code repo**: paths are `.claude/plans/…`; `gh` infers the repo.
-- **Inside the plans repo** — a cloud session, or a machine without the code checked out:
-  paths are `<repo>/…`, and every `gh` call takes `-R <owner/repo>` from the plan's
-  `repo:` field. `plan-status` and `plan-sync` work here in full. `plan-write` and
-  `plan-dispatch` need the code; run them from the code repo.
+The plans repo is always **`Evalir/plans`** — `git@github.com:Evalir/plans.git`, cloned
+at `~/dev/evalir/plans`. Nothing else is ever the plans repo.
+
+- **Inside a code repo**: paths are `.claude/plans/…`; `gh` infers the repo. Before any
+  write, confirm the mount: `readlink .claude/plans` must point into `~/dev/evalir/plans`.
+  If it does not, stop and run `plan-init`. Never create `.claude/plans` as a plain
+  directory — that makes a second tree nobody else can see.
+- **Inside the plans repo** — a cloud session opened on `Evalir/plans`, or a machine
+  without the code checked out: paths are `<repo>/…`, and every `gh` call takes
+  `-R <owner/repo>` from the plan's `repo:` field. `plan-status` and `plan-sync` work here
+  in full. `plan-write` and `plan-dispatch` need the code; run them from the code repo.
 
 ## Filename
 

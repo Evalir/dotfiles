@@ -39,6 +39,8 @@ a tool for that is wired up; the link is the record.
 
 ## Write
 
+`.claude/plans` must be the mount into `Evalir/plans` (`plan-spec`, "Where you are");
+if it is missing, run `plan-init` first. Then write
 `.claude/plans/drafts/<scope>-<slug>.md`, frontmatter per `plan-spec` with
 `status: draft`. Fill only what you know. Blank beats guessed.
 
