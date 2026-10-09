@@ -31,6 +31,8 @@ Debian, `zellij` on any Debian) is reported rather than aborting the run.
 - **tmux** — `shell/tmux/tmux.conf` -> `~/.config/tmux/tmux.conf` (XDG path,
   tmux >= 3.1).
 - **nvim** is symlinked as a whole dir (`editors/nvim` -> `~/.config/nvim`).
+  Requires Neovim 0.12+ and tree-sitter CLI 0.26.1+; see the
+  [Neovim guide](editors/nvim/README.md) for setup and shortcuts.
 - **agent skills** — `agents/skills` -> `~/.agents/skills` (the canonical,
   harness-neutral copy), and each skill linked into `~/.cursor/skills`,
   `~/.claude/skills` and `~/.codex/skills` for whichever of those is installed.

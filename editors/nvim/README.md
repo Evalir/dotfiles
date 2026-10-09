@@ -1,215 +1,126 @@
-# kickstart.nvim
+# Neovim config
 
-## Introduction
+This directory is linked to `~/.config/nvim` by `just link` in the dotfiles
+root. Restart Neovim after editing the config. Plugin versions are recorded in
+`lazy-lock.json`; use `:Lazy restore` to restore them.
 
-A starting point for Neovim that is:
+## Everyday shortcuts
 
-* Small
-* Single-file
-* Completely Documented
+The leader key is **Space**.
 
-**NOT** a Neovim distribution, but instead a starting point for your configuration.
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl-B` | Toggle the file tree and reveal the current file (normal/insert mode) |
+| `Ctrl-F` | Fuzzy-find a file, including dotfiles (normal/insert mode) |
+| `Space fg` | Search text across files |
+| `Space Space` | Switch between open buffers |
+| `Space bb` | Show open buffers in Neo-tree |
+| `[b` / `]b` | Previous / next buffer tab |
+| `Space bp` / `Space bd` | Pick a buffer tab / close the current buffer |
+| `Space ge` | Show Git changes in Neo-tree |
+| `Space st` | Live theme preview (Enter selects; Esc cancels) |
+| `gd` / `gr` | Go to definition / find references |
+| `K` | Show documentation under the cursor |
+| `Space rn` / `Space ca` | Rename symbol / code action |
+| `[d` / `]d` | Previous / next diagnostic |
+| `Ctrl-Space` / `Ctrl-Y` | Trigger / accept completion |
+| `Ctrl-U` / `Ctrl-D` | Scroll completion documentation |
 
-## Installation
+Neo-tree has clickable Files, Buffers, and Git sources above the tree. Use
+arrows or `hjkl` to navigate, Enter to open, `a` to create, `r` to rename,
+`d` to delete (with confirmation), and `?` for help. `H` toggles hidden/ignored
+files. Bufferline shows open files across the top, with icons, unsaved-change
+markers, and diagnostics. Click to switch; click the close icon to close a
+buffer (unsaved changes require confirmation). In file search, type part of a
+filename, use arrows or
+`Ctrl-N`/`Ctrl-P` to select, and Enter to open.
 
-### Install Neovim
+Tmux uses `Ctrl-B` as its default prefix: press it **twice** to send it to Neovim.
 
-Kickstart.nvim targets *only* the latest
-['stable'](https://github.com/neovim/neovim/releases/tag/stable) and latest
-['nightly'](https://github.com/neovim/neovim/releases/tag/nightly) of Neovim.
-If you are experiencing issues, please make sure you have the latest versions.
+## Rust and Python
 
-### Install External Dependencies
+Mason installs **rust-analyzer**, **Pyright**, **Ruff**, and **LuaLS** automatically.
+Run `:MasonToolsInstallSync` to finish installation explicitly. `:checkhealth vim.lsp`
+shows attached servers; `:ConformInfo` shows available formatters.
 
-> **NOTE**
-> [Backup](#FAQ) your previous configuration (if any exists)
+- Rust: completion, navigation, diagnostics, inlay hints, and rustfmt on save.
+  Install the toolchain components with `rustup component add rust-src rustfmt`.
+- Python: Pyright handles types/completion/navigation; Ruff handles lint and
+  code actions, with Ruff formatting on save. The interpreter comes from an
+  activated virtualenv/Conda environment, then project `.venv` or `venv`, then
+  Pyright's default discovery. Restart Neovim after changing environments, or
+  use `:LspPyrightSetPythonPath /path/to/python`.
+- Python remote plugins are disabled; this config uses Lua plugins and LSP,
+  so editing Python does not require `pynvim`.
 
-External Requirements:
-- Basic utils: `git`, `make`, `unzip`, C Compiler (`gcc`)
-- [ripgrep](https://github.com/BurntSushi/ripgrep#installation)
-- A [Nerd Font](https://www.nerdfonts.com/): optional, provides various icons
-  - if you have it set `vim.g.have_nerd_font` in `init.lua` to true
-- Language Setup:
-  - If want to write Typescript, you need `npm`
-  - If want to write Golang, you will need `go`
-  - etc.
+Formatting on save uses the file's directory to discover project rules:
+`rustfmt.toml` / `.rustfmt.toml` and Cargo's edition for Rust,
+`pyproject.toml` / `ruff.toml` / `.ruff.toml` for Python, and
+`stylua.toml` / `.stylua.toml` for Lua. Rustup also selects the project's
+toolchain. Python prefers Ruff installed in the project's `.venv` or `venv`,
+falling back to Mason's Ruff. Formatter defaults apply when no config exists;
+this does not automatically select other tools such as Black from project scripts.
 
-> **NOTE**
-> See [Windows Installation](#Windows-Installation) to double check any additional Windows notes
+Requires **Neovim 0.12+**, **tree-sitter CLI 0.26.1+**, a current Node.js for
+Pyright/Copilot, Python 3, Rust, `git`, `make`, a C compiler, `curl`, `tar`,
+`unzip`, and `ripgrep`. Icons need a Nerd Font in your terminal.
 
-Neovim's configurations are located under the following paths, depending on your OS:
+On macOS: `brew install neovim tree-sitter-cli ripgrep fd`. On other machines,
+check `nvim --version` before linking; older distro packages may need upgrading.
+Treesitter installs parsers on first launch. Restart after the initial install.
+Use `:TSUpdate` after updating the plugin.
 
-| OS | PATH |
-| :- | :--- |
-| Linux, MacOS | `$XDG_CONFIG_HOME/nvim`, `~/.config/nvim` |
-| Windows (cmd)| `%userprofile%\AppData\Local\nvim\` |
-| Windows (powershell)| `$env:USERPROFILE\AppData\Local\nvim\` |
+## Config layout
 
-### Install Kickstart
+| File under `lua/` | Responsibility |
+| --- | --- |
+| `config/options.lua` | Editor options, diagnostics, yank highlighting |
+| `config/keymaps.lua` | Basic navigation and diagnostics |
+| `plugins/navigation.lua` | Neo-tree, Bufferline, safe buffer closing |
+| `plugins/search.lua` | Telescope and search shortcuts |
+| `plugins/completion.lua` | Stable Blink, native snippets, Lua API completion |
+| `plugins/lsp.lua` | Native LSP setup and Mason tool installation |
+| `plugins/formatting.lua` | Conform and project formatter discovery |
+| `plugins/treesitter.lua` | Current Treesitter installer and native highlighting |
+| `plugins/editor.lua` | Git signs, statusline, Copilot, personal notes |
+| `plugins/themes.lua` | GitHub and three classic dark themes, loaded on demand |
 
-Clone kickstart.nvim:
+Add plugin specs under `lua/plugins/`; Lazy imports that directory automatically.
+Neovim handles commenting (`gcc` / `gc`) and `.editorconfig` natively. Blink
+provides completion and signature help; `Ctrl-L`/`Ctrl-H` move through snippets,
+while Tab remains available for Copilot.
+Org files remain in `~/orgfiles`; Markdown notes remain in `~/evalir/notes`.
 
-<details><summary> Linux and Mac </summary>
+Maintenance: `:Lazy update` updates plugins and the lockfile; `:Lazy restore`
+returns to the lockfile versions. Use `:Mason` for language tool updates,
+`:checkhealth` for troubleshooting, and `:ConformInfo` for formatter selection.
+The old Kickstart examples, unused themes, nvim-cmp/LuaSnip stack, Comment.nvim,
+and mason-lspconfig bridge have been removed.
 
-```sh
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
-```
+## Themes
 
-</details>
+The default is **GitHub Dark High Contrast**, with a near-black background.
+Base16 and the old theme collection have been
+removed from the config and lockfile. Themes load on demand, without custom
+highlight overrides. `Space st` previews them live; Enter keeps the selection
+for this session, and Esc restores the previous theme. To change the startup
+default, edit the single `vim.cmd.colorscheme` line at the end of `init.lua`.
 
-<details><summary> Windows </summary>
+| Theme command | Style | Upstream screenshot |
+| --- | --- | --- |
+| `:colorscheme github_dark_high_contrast` | Near-black background, bright GitHub colors | [GitHub theme previews](https://github.com/projekt0n/github-nvim-theme#screenshots) |
+| `:colorscheme github_dark_default` | Standard GitHub dark palette | [GitHub theme previews](https://github.com/projekt0n/github-nvim-theme#screenshots) |
+| `:colorscheme github_dark_dimmed` | Softer GitHub dark palette | [GitHub theme previews](https://github.com/projekt0n/github-nvim-theme#screenshots) |
+| `:colorscheme gruvbox` | Hard dark background, warm yellow/orange/green | [Gruvbox dark/light comparison](https://i.postimg.cc/fy3tnGFt/gruvbox-themes.png) |
+| `:colorscheme monokai-pro-classic` | Classic Monokai: vivid pink, lime, cyan on charcoal | [Monokai Classic](https://user-images.githubusercontent.com/80513079/209659153-9362a05f-2b7f-4b36-acf1-d13bef6a9118.png) |
+| `:colorscheme dracula` | Classic purple, pink, cyan and bright green | [Dracula](https://raw.githubusercontent.com/Mofiqul/dracula.nvim/main/assets/showcase.png) |
 
-If you're using `cmd.exe`:
+Monokai uses the stable v1 release series. If an older Packer installation exists
+under `~/.local/share/nvim/site/pack/packer`, move it outside `site/pack` before
+starting this config; its old plugins and themes can shadow Lazy's versions.
 
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git %userprofile%\AppData\Local\nvim\
-```
-
-If you're using `powershell.exe`
-
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git $env:USERPROFILE\AppData\Local\nvim\
-```
-
-</details>
-
-### Post Installation
-
-Start Neovim
-
-```sh
-nvim
-```
-
-That's it! Lazy will install all the plugins you have. Use `:Lazy` to view
-current plugin status.
-
-Read through the `init.lua` file in your configuration folder for more
-information about extending and exploring Neovim.
-
-### Getting Started
-
-[The Only Video You Need to Get Started with Neovim](https://youtu.be/m8C0Cq9Uv9o)
-
-### Recommended Steps
-
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) this repo
-(so that you have your own copy that you can modify) and then install. You
-can install it on your machine using the methods above.
-
-> **NOTE**
-> Your fork's url will be something like this: `https://github.com/<your_github_username>/kickstart.nvim.git`
-
-#### Examples of adding popularly requested plugins
-
-NOTE: You'll need to uncomment the line in the init.lua that turns on loading custom plugins.
-
-<details>
-  <summary>Adding autopairs</summary>
-
-This will automatically install [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs) and enable it on startup. For more information, see documentation for [lazy.nvim](https://github.com/folke/lazy.nvim).
-
-In the file: `lua/custom/plugins/autopairs.lua`, add:
-
-```lua
--- File: lua/custom/plugins/autopairs.lua
-
-return {
-  "windwp/nvim-autopairs",
-  -- Optional dependency
-  dependencies = { 'hrsh7th/nvim-cmp' },
-  config = function()
-    require("nvim-autopairs").setup {}
-    -- If you want to automatically add `(` after selecting a function or method
-    local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-    local cmp = require('cmp')
-    cmp.event:on(
-      'confirm_done',
-      cmp_autopairs.on_confirm_done()
-    )
-  end,
-}
-```
-
-</details>
-<details>
-  <summary>Adding a file tree plugin</summary>
-
-This will install the tree plugin and add the command `:Neotree` for you. For more information, see the documentation at [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim).
-
-In the file: `lua/custom/plugins/filetree.lua`, add:
-
-```lua
--- File: lua/custom/plugins/filetree.lua
-
-return {
-  "nvim-neo-tree/neo-tree.nvim",
-  version = "*",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-    "MunifTanjim/nui.nvim",
-  },
-  config = function ()
-    require('neo-tree').setup {}
-  end,
-}
-```
-
-</details>
-
-### FAQ
-
-* What should I do if I already have a pre-existing neovim configuration?
-  * You should back it up and then delete all associated files.
-  * This includes your existing init.lua and the neovim files in `~/.local` which can be deleted with `rm -rf ~/.local/share/nvim/`
-* Can I keep my existing configuration in parallel to kickstart?
-  * Yes! You can use [NVIM_APPNAME](https://neovim.io/doc/user/starting.html#%24NVIM_APPNAME)`=nvim-NAME` to maintain multiple configurations. For example, you can install the kickstart configuration in `~/.config/nvim-kickstart` and create an alias:
-    ```
-    alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
-    ```
-    When you run Neovim using `nvim-kickstart` alias it will use the alternative config directory and the matching local directory `~/.local/share/nvim-kickstart`. You can apply this approach to any Neovim distribution that you would like to try out.
-* What if I want to "uninstall" this configuration:
-  * See [lazy.nvim uninstall](https://github.com/folke/lazy.nvim#-uninstalling) information
-* Why is the kickstart `init.lua` a single file? Wouldn't it make sense to split it into multiple files?
-  * The main purpose of kickstart is to serve as a teaching tool and a reference
-    configuration that someone can easily use to `git clone` as a basis for their own.
-    As you progress in learning Neovim and Lua, you might consider splitting `init.lua`
-    into smaller parts. A fork of kickstart that does this while maintaining the 
-    same functionality is available here:
-    * [kickstart-modular.nvim](https://github.com/dam9000/kickstart-modular.nvim)
-  * Discussions on this topic can be found here:
-    * [Restructure the configuration](https://github.com/nvim-lua/kickstart.nvim/issues/218)
-    * [Reorganize init.lua into a multi-file setup](https://github.com/nvim-lua/kickstart.nvim/pull/473)
-
-### Windows Installation
-
-Installation may require installing build tools and updating the run command for `telescope-fzf-native`
-
-See `telescope-fzf-native` documentation for [more details](https://github.com/nvim-telescope/telescope-fzf-native.nvim#installation)
-
-This requires:
-
-- Install CMake and the Microsoft C++ Build Tools on Windows
-
-```lua
-{'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
-```
-
-Alternatively, one can install gcc and make which don't require changing the config,
-the easiest way is to use choco:
-
-1. install [chocolatey](https://chocolatey.org/install)
-either follow the instructions on the page or use winget,
-run in cmd as **admin**:
-```
-winget install --accept-source-agreements chocolatey.chocolatey
-```
-
-2. install all requirements using choco, exit previous cmd and
-open a new one so that choco path is set, and run in cmd as **admin**:
-```
-choco install -y neovim git ripgrep wget fd unzip gzip mingw make
-```
-
-Then, continue with the [Install Kickstart](#Install-Kickstart) step.
+References: [Blink stable](https://cmp.saghen.dev/),
+[Neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim),
+[Bufferline](https://github.com/akinsho/bufferline.nvim),
+[Treesitter](https://github.com/nvim-treesitter/nvim-treesitter),
+[Ruff configuration](https://docs.astral.sh/ruff/configuration/).
