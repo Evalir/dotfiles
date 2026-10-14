@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import fcntl
 import json
 import os
+import stat
 from pathlib import Path
 import tempfile
 import uuid
@@ -80,6 +81,19 @@ def load(path, root):
 def locked(directory, roots):
     parents(directory / 'lock', roots)
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+    inherited = os.environ.get('TORVUS_DOTFILES_LOCK_FD')
+    if inherited is not None:
+        try:
+            fd = int(inherited)
+            actual, expected = os.fstat(fd), (directory / 'lock').lstat()
+            if (fd < 3 or not stat.S_ISREG(actual.st_mode) or actual.st_uid != os.getuid()
+                    or (actual.st_dev, actual.st_ino) != (expected.st_dev, expected.st_ino)):
+                raise ValueError('Inherited dotfiles lock does not match local state')
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except (OSError, ValueError) as error:
+            raise ValueError('Invalid or busy inherited dotfiles lock') from error
+        yield
+        return
     fd = os.open(directory / 'lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
     try:
         try:

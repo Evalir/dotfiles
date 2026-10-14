@@ -11,6 +11,8 @@ def register(path, data, argv):
         raise ValueError('Hook must name an existing absolute executable followed by its arguments')
     if any('\0' in item for item in argv):
         raise ValueError('Invalid hook argument')
+    if data.get('hook') == list(argv):
+        return
     data['hook'] = list(argv)
     data['integration'] = {'healthy': False, 'status': 'pending'}
     save(path, data)
@@ -33,4 +35,5 @@ def run(path, data):
 
 
 def overall(data):
-    return data['phase'] == 'healthy' and (not data.get('hook') or bool((data.get('integration') or {}).get('healthy')))
+    return data['phase'] == 'healthy' and (not data.get('hook') or (bool((data.get('integration') or {}).get('healthy'))
+            and data['integration'].get('revision') == data.get('applied')))
