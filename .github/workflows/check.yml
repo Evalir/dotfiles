@@ -1,0 +1,35 @@
+name: Check shared profiles
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  profiles:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Exercise isolated profile and reconciliation fixtures
+        run: python3 -m unittest discover -s install/tests -p 'test_*.py'
+      - name: Check launcher syntax and whitespace
+        run: |
+          bash -n install/link.sh
+          git diff --check HEAD^ HEAD
+          git diff --check
