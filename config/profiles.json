@@ -8,7 +8,7 @@
   },
   "components": {
     "launchers": {
-      "links": [["shell/bin/torvus", "home", ".local/bin/torvus"], ["shell/bin/torvus-ssh.py", "home", ".local/bin/torvus-ssh.py"]],
+      "links": [["shell/bin/dotfiles", "home", ".local/bin/dotfiles"], ["shell/bin/torvus", "home", ".local/bin/torvus"], ["shell/bin/torvus-ssh.py", "home", ".local/bin/torvus-ssh.py"]],
       "required": [{"command": "mosh"}, {"command": "ssh"}, {"command": "uv"}]
     },
     "fish": {

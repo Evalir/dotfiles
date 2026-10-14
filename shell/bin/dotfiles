@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Run a private copy of helpers so checkout changes cannot mix Python versions."""
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+
+root = Path(__file__).resolve().parents[2]
+with tempfile.TemporaryDirectory(prefix='dotfiles-helper-') as staging:
+    for source in (root / 'install').glob('*.py'):
+        shutil.copy2(source, Path(staging) / source.name)
+    sys.exit(subprocess.call([sys.executable, str(Path(staging) / 'sync_cli.py'),
+                              '--root', str(root), *sys.argv[1:]]))
