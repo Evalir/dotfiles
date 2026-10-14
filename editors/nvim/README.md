@@ -124,3 +124,16 @@ References: [Blink stable](https://cmp.saghen.dev/),
 [Bufferline](https://github.com/akinsho/bufferline.nvim),
 [Treesitter](https://github.com/nvim-treesitter/nvim-treesitter),
 [Ruff configuration](https://docs.astral.sh/ruff/configuration/).
+
+Dotfiles reconciliation uses `install/editor.py` for pinned readiness. It restores
+plugin commits from `lazy-lock.json` and installs only missing declared parsers
+and Mason tools. Parser/tool declarations live in `lua/config/requirements.lua`.
+The helper starts Neovim with `-u NONE --noplugin`, without interactive init or
+machine-local overrides; diagnostics do not install anything. It never runs Lazy
+update or updates installed Mason packages. `rustfmt` belongs to host provisioning.
+
+Apply refuses dirty plugin checkouts and conservatively requires closing all
+Neovim processes owned by the current user. The caller holds the dotfiles state
+lock. Plugin restoration and missing dependencies need network access; failure
+leaves readiness incomplete and can be retried. Existing parser/tool versions are
+preserved, so rollback restores plugin commits but does not downgrade those tools.

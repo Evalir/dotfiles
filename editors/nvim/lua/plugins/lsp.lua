@@ -7,7 +7,7 @@ return {
       {
         'WhoIsSethDaniel/mason-tool-installer.nvim',
         opts = {
-          ensure_installed = { 'rust-analyzer', 'pyright', 'ruff', 'lua-language-server', 'stylua' },
+          ensure_installed = vim.tbl_keys(require('config.requirements').tools),
           integrations = { ['mason-lspconfig'] = false, ['mason-null-ls'] = false, ['mason-nvim-dap'] = false },
         },
       },

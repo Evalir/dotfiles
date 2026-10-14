@@ -5,21 +5,7 @@ return {
     lazy = false,
     build = ':TSUpdate',
     config = function()
-      require('nvim-treesitter').install {
-        'bash',
-        'c',
-        'html',
-        'json',
-        'lua',
-        'markdown',
-        'markdown_inline',
-        'python',
-        'rust',
-        'toml',
-        'vim',
-        'vimdoc',
-        'yaml',
-      }
+      require('nvim-treesitter').install(require('config.requirements').parsers)
       vim.api.nvim_create_autocmd('FileType', {
         group = vim.api.nvim_create_augroup('treesitter-highlight', { clear = true }),
         callback = function(event)
