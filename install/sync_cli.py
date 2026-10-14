@@ -25,7 +25,8 @@ def snapshot(root, revision, destination):
             path = Path(member.name)
             if path.is_absolute() or '..' in path.parts or not (member.isfile() or member.isdir()):
                 raise ValueError(f'Unsupported source archive member: {member.name}')
-        stream.extractall(destination)
+        options = {'filter': 'data'} if hasattr(tarfile, 'data_filter') else {}
+        stream.extractall(destination, **options)
 
 
 def report_for(root, selected, profile, roots):
