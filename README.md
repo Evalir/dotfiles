@@ -16,7 +16,8 @@ Or run the two steps individually:
 
 ```sh
 just bootstrap     # install neovim, mosh, eza, zellij, starship (assumes fish/git/curl/tmux)
-just link          # symlink configs into ~/.config
+just link          # desktop profile; requires Python 3.9+
+just link-headless # portable server profile, without GUI configuration
 ```
 
 `bootstrap` auto-detects the package manager (brew / apt / dnf / pacman) and
@@ -36,42 +37,80 @@ Debian, `zellij` on any Debian) is reported rather than aborting the run.
 - **nvim** is symlinked as a whole dir (`editors/nvim` -> `~/.config/nvim`).
   Requires Neovim 0.12+ and tree-sitter CLI 0.26.1+; see the
   [Neovim guide](editors/nvim/README.md) for setup and shortcuts.
-- **agent skills** — `agents/skills` -> `~/.agents/skills` (the canonical,
-  harness-neutral copy), and each skill linked into `~/.cursor/skills`,
-  `~/.claude/skills` and `~/.codex/skills` for whichever of those is installed.
-  Edit in the repo; every harness sees it. For a repo that cloud agents work
-  in, `bash install/agent-skills.sh <checkout>` vendors them into its
-  `.claude/skills/` as tracked project skills instead — a cloud sandbox clones
-  the repo and never sees this home directory.
+- **agent skills** — individual links under `~/.agents/skills` and each installed
+  harness's skills directory. Unrelated skills, `.system` directories, credentials
+  and settings stay untouched. Run the linker again after installing a harness.
+  Repo-vendored skills remain a separate `install/agent-skills.sh` operation.
 
-Anything already at a target path is moved aside to a timestamped
-`*.bak.<date>` before linking, so nothing is clobbered. It's safe to re-run:
-targets already pointing at the repo are left alone. Because it's symlinks, a
-later `git pull` updates every linked machine.
+## Portable profiles and ownership
 
-## Portable profile contract
+The linker requires Python 3.9+ and never installs packages. `config/profiles.json`
+declares the shared components once. `headless` activates fish, tmux, Neovim,
+portable launchers and personal agent skills. `desktop` adds Rex and any published
+shared Ghostty config. Shared Starship config is linked when published; currently
+absent optional sources are reported. With no flags, the profile is `desktop`.
+`--bin` and `--rex` still select only their respective mappings.
 
-`config/profiles.json` declares headless and desktop components once. Inspect the
-resolved links and prerequisite capabilities without changing any files:
+```sh
+just preview                         # headless preview, no filesystem changes
+bash install/link.sh --profile headless --dry-run --json
+bash install/link.sh --profile headless
+# Inspect conflicts, then explicitly back them up and adopt them:
+bash install/link.sh --profile headless --adopt
+```
+
+Existing correct links are adopted without replacement. Conflicting targets require
+`--adopt`, which moves them to uniquely named `.bak.*` siblings before linking.
+This also safely converts the old whole-directory `~/.agents/skills` symlink to
+individual links, without modifying the checkout through that symlink. Unknown
+symlinked parent directories are refused. Existing machine `config.fish`, Torvus
+`zz-torvus.fish`, signing identity, services and compiler settings are not managed.
+
+The ownership ledger is `$XDG_STATE_HOME/dotfiles/links.json` (default
+`~/.local/state/dotfiles/links.json`). It records each target/source, checkout commit
+when available and backup locations. A lock serializes writes; pending records let
+a rerun recover interrupted link creation. Repeated runs preserve equal links and
+ledger contents. No Git fetch/checkout, package manager or credential access occurs.
+The commit field is provenance, not a claim that the checkout is clean/applied.
+
+Obsolete links are reported, not deleted. Add `--prune` to remove only links still
+pointing to their recorded source. User replacements and backup files are retained.
+Changing from desktop to headless does not remove old GUI links without explicit
+pruning. Scoped `--bin`/`--rex` pruning never removes other components. Do not
+point two different dotfiles checkouts at the same ownership ledger.
+
+Optional host overrides live outside the shared checkout:
+
+- Fish: `$XDG_CONFIG_HOME/fish/evalir.local.fish` (default `~/.config/fish/`).
+- tmux: `~/.tmux.local.conf`.
+- Neovim: `$XDG_CONFIG_HOME/dotfiles/nvim.lua` (default `~/.config/dotfiles/nvim.lua`).
+
+The installer never creates, replaces or syncs these override files. Neovim loads
+its override after shared setup; restart editors/new shells to pick up changes.
+Existing tmux sessions are not reloaded or restarted by linking.
+
+Inspect package-neutral requirements separately:
 
 ```sh
 python3 install/profile.py headless
-python3 install/profile.py desktop
 ```
 
-Headless selects fish, tmux, Neovim, launchers and individual personal agent skills.
-Desktop also selects Rex and any published shared Ghostty configuration. Shared
-Starship configuration is included when published. Missing optional configuration
-is reported explicitly. Required/optional binaries and minimum versions are listed;
-`executable` reports PATH availability, while `version_checked: false` means this
-report does not certify installed versions or overall readiness. It never installs
-packages, reads credentials or changes HOME. The existing linker is unchanged in
-this preparatory layer; ownership-aware profile installation follows separately.
+The report distinguishes required/optional binaries, minimum compatible versions
+and PATH availability. `version_checked: false` and `readiness_checked: false`
+mean linking is not certification of tool versions, plugins or editor readiness.
+Host provisioning supplies prerequisites; full sync/health checking follows in the
+next layer. No installed-version or overall-health claim is made by this linker.
 
-Check the profile contract with:
+Checks:
 
 ```sh
-python3 -m unittest discover -s install/tests -p 'test_profile.py'
+python3 -m unittest discover -s install/tests -p 'test_*.py'
+bash -n install/link.sh
+shellcheck -x -S warning install/link.sh
+fish -n shell/fish/conf.d/evalir.fish
+fish -n shell/fish/functions/evalir.fish
+uv run shell/tests/test_torvus_ssh.py
+git diff --check
 ```
 
 ## Dev environment (without Nix)
@@ -147,7 +186,7 @@ torvus --safe             # ordinary SSH
 
 Full `just setup` installs Mosh/uv and links the launcher and its helper. The launcher works
 on macOS and Linux; its symlink follows future `git pull` updates. Existing
-launchers are backed up, and rerunning the installer leaves correct links alone.
+launcher conflicts require --adopt for a backup; rerunning leaves correct links alone.
 
 SSH credentials and agent settings remain machine-specific. For a new machine,
 configure the `Host torvus` alias for `evalir@37.27.118.27` using your authorized
@@ -207,6 +246,6 @@ link` after.
 Edit the files in this repo directly — on a linked machine that *is* the live
 config. Commit and push, then `git pull` on the other boxes.
 
-If a machine was set up by hand and isn't linked yet, run `just link`: the
-existing config is backed up to `*.bak.<date>` first, so you can pull anything
-worth keeping out of the backup and into the repo before deleting it.
+If a machine was set up by hand, inspect `bash install/link.sh --dry-run`, then
+use `--adopt` to back up existing config to `*.bak.*`. You can recover anything
+worth keeping from those backups and commit it to the repo.

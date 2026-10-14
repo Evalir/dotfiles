@@ -24,7 +24,7 @@ def environment():
     state = Path(os.environ.get('XDG_STATE_HOME') or home / '.local/state')
     if not all(p.is_absolute() for p in (home, config, state)):
         raise ValueError('HOME and XDG directories must be absolute')
-    return {'home': home, 'config': config, 'state': state}
+    return {'home': home.resolve(), 'config': config.resolve(), 'state': state.resolve()}
 
 
 def resolve(profile, root=ROOT, roots=None):

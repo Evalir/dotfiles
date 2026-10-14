@@ -9,6 +9,14 @@ bootstrap:
 link:
     bash ./install/link.sh
 
+# Portable server profile, without GUI configuration or package installation.
+link-headless:
+    bash ./install/link.sh --profile headless
+
+# Preview changes without touching the home or ownership state.
+preview profile="headless":
+    bash ./install/link.sh --profile {{ profile }} --dry-run
+
 # Install only command launchers into ~/.local/bin, with backups. Re-runnable
 link-bin:
     bash ./install/link.sh --bin
