@@ -71,3 +71,47 @@ class EditorTests(unittest.TestCase):
         self.assertTrue(result['healthy'], result)
         self.assertEqual(('git', '-C', str(plugin), 'fetch', 'origin', 'a' * 40), run.call_args_list[-2].args)
         self.assertEqual(('git', '-C', str(plugin), 'checkout', '--detach', 'a' * 40), run.call_args_list[-1].args)
+
+    def test_generated_help_index_is_the_only_untracked_exception(self):
+        plugin = self.data / 'nvim/lazy/test.nvim'
+        (plugin / 'doc').mkdir(parents=True)
+        run = editor.run
+        run('git', 'init', str(plugin))
+        run('git', '-C', str(plugin), 'config', 'user.name', 'fixture')
+        run('git', '-C', str(plugin), 'config', 'user.email', 'fixture@example.invalid')
+        (plugin / 'README').write_text('plugin source')
+        run('git', '-C', str(plugin), 'add', 'README')
+
+        def commit():
+            run('git', '-C', str(plugin), '-c', 'commit.gpgsign=false', 'commit', '-m', 'fixture')
+            sha = run('git', '-C', str(plugin), 'rev-parse', 'HEAD')
+            (self.root / 'editors/nvim/lazy-lock.json').write_text(
+                json.dumps({'test.nvim': {'commit': sha}}))
+
+        def health(expected):
+            # Use actual Git status in both public gates, ignoring only ambient
+            # Neovim processes and external tool/parser checks in this fixture.
+            with patch.object(editor, 'run', side_effect=lambda *args: '' if args[0] == 'ps' else run(*args)), \
+                    patch.object(editor, 'lua', side_effect=[self.manifest, {'errors': []}]):
+                for result in [editor.preflight(self.root), editor.check(self.root)]:
+                    self.assertEqual(expected, result['healthy'], result)
+                    if not expected:
+                        self.assertIn('dirty plugin checkout', result['errors'][0])
+
+        commit()
+        tags = plugin / 'doc/tags'
+        tags.write_text('generated help index')
+        health(True)
+        self.assertEqual('generated help index', tags.read_text())
+        for name in ['doc/tags.local', 'doc/tags\n?? doc/tags']:
+            extra = plugin / name
+            extra.parent.mkdir(parents=True, exist_ok=True)
+            extra.write_text('user edit')
+            health(False)
+            extra.unlink()
+        run('git', '-C', str(plugin), 'add', 'doc/tags')
+        health(False)
+        commit()
+        tags.write_text('modified tracked help index')
+        health(False)
+        self.assertEqual('modified tracked help index', tags.read_text())

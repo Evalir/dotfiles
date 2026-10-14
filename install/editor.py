@@ -23,6 +23,13 @@ def data_dir():
     return base / 'nvim'
 
 
+def plugin_dirty(path):
+    # Neovim generates this help index. Tracked indexes and every other edit
+    # remain protected; NUL records keep unusual filenames unambiguous.
+    status = run('git', '-C', str(path), 'status', '--porcelain=v1', '-z', '--untracked-files=all')
+    return any(entry != '?? doc/tags' for entry in status.split('\0') if entry)
+
+
 def preflight(root):
     """Read-only safety gate, also called before changing the dotfiles checkout."""
     errors = []
@@ -37,7 +44,7 @@ def preflight(root):
                 elif plugin.is_dir():
                     if not (plugin / '.git').exists():
                         errors.append(f'unrecognized plugin directory: {plugin}')
-                    elif run('git', '-C', str(plugin), 'status', '--porcelain', '--untracked-files=all'):
+                    elif plugin_dirty(plugin):
                         errors.append(f'dirty plugin checkout: {plugin}')
         # Conservatively include every Neovim of this user: process names cannot
         # reliably identify which config an already-running editor loaded.
@@ -97,7 +104,7 @@ def check(root, apply=False):
                     run('git', '-C', str(clone), 'fetch', 'origin', sha)
                     run('git', '-C', str(clone), 'checkout', '--detach', sha)
                     clone.rename(target)
-            if target.exists() and run('git', '-C', str(target), 'status', '--porcelain', '--untracked-files=all'):
+            if target.exists() and plugin_dirty(target):
                 raise ValueError(f'dirty plugin checkout: {target}')
             current = run('git', '-C', str(target), 'rev-parse', 'HEAD') if target.exists() else None
             if current != sha:
