@@ -15,6 +15,7 @@ from profile import environment, resolve
 from ownership import apply, inspect, load, locked, parents, save
 import reconcile_state as state
 import editor
+import integration
 
 
 def snapshot(root, revision, destination):
@@ -36,7 +37,7 @@ def report_for(root, selected, profile, roots):
     return report
 
 
-def status(root, data, report, ledger, roots, doctor=False):
+def status(root, data, report, ledger, roots, doctor=False, scope='all'):
     actions, migrations = inspect(report, ledger, roots.values())
     problems = []
     try:
@@ -52,6 +53,8 @@ def status(root, data, report, ledger, roots, doctor=False):
     health = editor.check(root) if doctor and 'nvim' in {x['component'] for x in report['links']} else None
     if health and not health['healthy']:
         problems.extend(health['errors'])
+    if scope != 'profile' and data.get('hook') and not integration.overall(data):
+        problems.append('Host integration needs a successful retry-hook')
     return {**data, 'checked_out': head, 'requirements': report['requirements'],
             'actions': actions, 'editor': health, 'healthy': not problems, 'errors': problems}
 
@@ -70,10 +73,20 @@ def operate(root, args, roots, directory):
         raise ValueError('Run dotfiles adopt --profile headless first')
     ledger = load(ledger_path, root)
     report = report_for(root, root, data['profile'], roots)
+    if args.command == 'register-hook':
+        state.checkout_policy(root)
+        integration.register(path, data, args.hook)
+        return {**data, 'healthy': False}
+    if args.command == 'retry-hook':
+        health = status(root, data, report, ledger, roots, True, 'profile')
+        if not health['healthy']:
+            raise ValueError('Shared profile is not healthy; reconcile before retrying the hook')
+        integration.run(path, data)
+        return {**data, 'healthy': integration.overall(data)}
     if args.command == 'requirements':
         return {'version': 1, 'profile': data['profile'], 'requirements': report['requirements'], 'healthy': True}
     if args.command in ('status', 'doctor'):
-        return status(root, data, report, ledger, roots, args.command == 'doctor')
+        return status(root, data, report, ledger, roots, args.command == 'doctor', args.scope)
     current = state.checkout_policy(root)
     if args.command == 'sync':
         state.git(root, 'fetch', 'origin', '+refs/heads/master:refs/remotes/origin/master')
@@ -121,23 +134,29 @@ def operate(root, args, roots, directory):
                 save(path, data)
             else:
                 state.finish(path, data, revision, root, components)
+                integration.run(path, data)
         except Exception as error:
             data.update(phase='incomplete', error=str(error))
             save(path, data)
             raise
-    return {**data, 'requirements': report['requirements'], 'healthy': data['phase'] == 'healthy'}
+    return {**data, 'requirements': report['requirements'], 'healthy': integration.overall(data)}
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, required=True, help=argparse.SUPPRESS)
-    parser.add_argument('command', choices=('adopt', 'status', 'doctor', 'requirements', 'reconcile', 'sync', 'rollback'))
+    parser.add_argument('command', choices=('adopt', 'status', 'doctor', 'requirements', 'reconcile', 'sync', 'rollback', 'register-hook', 'retry-hook'))
     parser.add_argument('--profile', choices=('headless', 'desktop'), default='headless')
-    parser.add_argument('--scope', choices=('profile',), default='profile')
+    parser.add_argument('--scope', choices=('all', 'profile'), default='all')
+    parser.add_argument('--hook', nargs=argparse.REMAINDER)
     parser.add_argument('--revision')
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--json', action='store_true')
     args = parser.parse_args(argv)
+    if args.dry_run and args.command in ('register-hook', 'retry-hook'):
+        raise ValueError('Hook commands do not support --dry-run')
+    if args.hook and args.command != 'register-hook':
+        raise ValueError('--hook is only supported by register-hook')
     root, roots = args.root.resolve(), environment()
     directory = roots['state'] / 'dotfiles'
     if args.revision and args.command != 'sync':

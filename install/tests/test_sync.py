@@ -12,14 +12,14 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import reconcile_state as state
 import sync_cli
-from test_reconcile_state import State
+import test_reconcile_state as fixtures
 
 
 class Sync(unittest.TestCase):
-    commit = State.commit
+    commit = fixtures.State.commit
 
     def setUp(self):
-        State.setUp(self)
+        fixtures.State.setUp(self)
         self.home = self.base / 'home'
         self.home.mkdir()
         self.roots = {'home': self.home, 'config': self.home / '.config', 'state': self.home / '.local/state'}
@@ -36,7 +36,7 @@ class Sync(unittest.TestCase):
         self.editor = patch.object(sync_cli.editor, 'check', return_value={'healthy': True, 'errors': []}).start()
 
     def run_command(self, command, **kwargs):
-        args = argparse.Namespace(command=command, profile='headless', dry_run=False, revision=None, **{})
+        args = argparse.Namespace(command=command, profile='headless', dry_run=False, revision=None, scope='all', **{})
         for key, value in kwargs.items():
             setattr(args, key, value)
         return sync_cli.operate(self.root, args, self.roots, self.directory)

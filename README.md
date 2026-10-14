@@ -275,3 +275,11 @@ Interrupted or failed applications remain incomplete until a successful reconcil
 links. Plugin/parser restoration may need network access; rollback does not undo
 system packages or remove installed tools. Host overrides and unrelated skills stay
 outside shared ownership. Helpers run from a private temporary copy during updates.
+
+A host can opt into one local post-apply command with
+`dotfiles register-hook --hook /absolute/program arg1 arg2`. Arguments are passed
+directly, without a shell. The registration stays in local state. Shared profile
+health and hook health are separate: a failed hook leaves the successfully applied
+SHA intact, and `dotfiles retry-hook` retries only the integration. Hooks that check
+the profile must use `doctor --scope profile --json` to avoid recursion. Ordinary
+`doctor` includes the recorded integration result, but never runs the hook.
