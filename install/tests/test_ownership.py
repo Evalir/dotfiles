@@ -134,6 +134,26 @@ class Ownership(unittest.TestCase):
         self.assertEqual(len(list(self.target.parent.glob('test.bak.*'))), 1)
         self.assertNotIn('pending', json.loads(self.state.read_text())['entries'][str(self.target)])
 
+    def test_inherited_lock_reuses_only_the_same_open_file(self):
+        self.state.parent.mkdir(parents=True, exist_ok=True)
+        lock = self.state.parent / 'lock'
+        fd = os.open(lock, os.O_CREAT | os.O_RDWR, 0o600)
+        self.addCleanup(os.close, fd)
+        ownership.fcntl.flock(fd, ownership.fcntl.LOCK_EX | ownership.fcntl.LOCK_NB)
+        with patch.dict(os.environ, {'TORVUS_DOTFILES_LOCK_FD': str(fd)}):
+            with ownership.locked(self.state.parent, self.roots):
+                pass
+        other = os.open(lock, os.O_RDWR)
+        self.addCleanup(os.close, other)
+        with patch.dict(os.environ, {'TORVUS_DOTFILES_LOCK_FD': str(other)}):
+            with self.assertRaisesRegex(ValueError, 'busy inherited'):
+                with ownership.locked(self.state.parent, self.roots):
+                    self.fail('separate open descriptor bypassed the held lock')
+        with patch.dict(os.environ, {'TORVUS_DOTFILES_LOCK_FD': '2'}):
+            with self.assertRaisesRegex(ValueError, 'inherited'):
+                with ownership.locked(self.state.parent, self.roots):
+                    self.fail('stderr accepted as lock')
+
     def test_lock_and_ledger_identity_guards(self):
         with ownership.locked(self.state.parent, self.roots):
             with self.assertRaisesRegex(ValueError, 'running'):

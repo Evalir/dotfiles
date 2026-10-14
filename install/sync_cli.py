@@ -134,7 +134,8 @@ def operate(root, args, roots, directory):
                 save(path, data)
             else:
                 state.finish(path, data, revision, root, components)
-                integration.run(path, data)
+                if args.command != 'adopt':
+                    integration.run(path, data)
         except Exception as error:
             data.update(phase='incomplete', error=str(error))
             save(path, data)
