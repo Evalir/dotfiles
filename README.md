@@ -249,3 +249,29 @@ config. Commit and push, then `git pull` on the other boxes.
 If a machine was set up by hand, inspect `bash install/link.sh --dry-run`, then
 use `--adopt` to back up existing config to `*.bak.*`. You can recover anything
 worth keeping from those backups and commit it to the repo.
+
+### Published dotfiles on another machine
+
+Keep editing, committing and pushing upstream manually. On each machine, preview
+`dotfiles adopt --profile headless --dry-run`, then run the same command without
+`--dry-run`. Adoption backs up conflicting links and records any missing tools;
+it does not install system packages. Use `desktop` on a workstation.
+
+`dotfiles requirements --json` reports the prerequisites. After installing them,
+`dotfiles reconcile` repairs links and restores the published editor lock. It does
+not fetch. After a manual `git pull --ff-only`, run it again.
+
+`dotfiles sync --dry-run` previews origin/master. `dotfiles sync` fetches once and
+applies that exact published SHA; `--revision FULL_SHA` selects an older published
+revision. Dirty checkouts, feature branches, local-only commits, foreign links and
+running Neovim instances block application. Nothing is stashed or reset. Existing
+shells and jobs survive; reopen editors/new shells to load configuration changes.
+Linked files change immediately when Git checks them out; activation is not atomic.
+
+`dotfiles status --json` distinguishes checked-out, attempted, applied and previous
+revisions. `dotfiles doctor --scope profile --json` also checks editor readiness.
+Interrupted or failed applications remain incomplete until a successful reconcile.
+`dotfiles rollback` restores the previous successfully applied source and owned
+links. Plugin/parser restoration may need network access; rollback does not undo
+system packages or remove installed tools. Host overrides and unrelated skills stay
+outside shared ownership. Helpers run from a private temporary copy during updates.
