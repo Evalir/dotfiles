@@ -8,8 +8,16 @@
 # already point at this repo are left untouched.
 #
 # Usage:  bash install/link.sh          # from anywhere; resolves the repo itself
+#         bash install/link.sh --bin    # only command launchers in ~/.local/bin
 #
 set -euo pipefail
+
+if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [ "$1" != --bin ]; }; then
+    printf 'Usage: bash install/link.sh [--bin]\n' >&2
+    exit 2
+fi
+BIN_ONLY=false
+if [ "${1:-}" = --bin ]; then BIN_ONLY=true; fi
 
 # Repo root = parent of this script's dir, resolved to an absolute path.
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -27,12 +35,17 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 # agents/skills is the harness-neutral home of the agent skills; each harness is
 # then pointed at it below, so one edit in the repo reaches all of them.
 MAPPINGS=(
+    "shell/bin/torvus|$HOME/.local/bin/torvus"
+)
+if [ "$BIN_ONLY" = false ]; then
+MAPPINGS+=(
     "shell/fish/conf.d/evalir.fish|$CONFIG_HOME/fish/conf.d/evalir.fish"
     "shell/fish/functions/evalir.fish|$CONFIG_HOME/fish/functions/evalir.fish"
     "shell/tmux/tmux.conf|$CONFIG_HOME/tmux/tmux.conf"
     "editors/nvim|$CONFIG_HOME/nvim"
     "agents/skills|$HOME/.agents/skills"
 )
+fi
 
 link_one() {
     local src="$REPO_ROOT/$1" dst="$2"
@@ -72,6 +85,11 @@ echo
 for m in "${MAPPINGS[@]}"; do
     link_one "${m%%|*}" "${m#*|}"
 done
+
+if [ "$BIN_ONLY" = true ]; then
+    echo 'Done. Ensure ~/.local/bin is on PATH (the personal fish config already adds it).'
+    exit 0
+fi
 
 # Every harness reads its own personal skills folder, so each skill is linked into
 # each of them as well — but only where that harness is installed (its dotdir

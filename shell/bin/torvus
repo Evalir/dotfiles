@@ -1,0 +1,25 @@
+#!/bin/sh
+# The SSH Host torvus entry supplies the address and identity.
+set -eu
+
+usage() {
+  printf '%s\n' \
+    'Usage: torvus [--safe | --help]' \
+    '  torvus         Mosh with immediate local typing prediction.' \
+    '  torvus --safe  Ordinary SSH for hidden passwords and tokens.'
+}
+
+if [ "$#" -gt 1 ]; then
+  usage >&2
+  exit 2
+fi
+
+case ${1-} in
+  '')
+    printf '%s\n' 'Local echo enabled; use torvus --safe for hidden passwords.' >&2
+    exec mosh --predict=experimental torvus
+    ;;
+  --safe) exec ssh torvus ;;
+  --help|-h) usage ;;
+  *) usage >&2; exit 2 ;;
+esac

@@ -25,6 +25,9 @@ Debian, `zellij` on any Debian) is reported rather than aborting the run.
 
 `link` symlinks the tracked configs into place (mostly `~/.config`):
 
+- **command launchers** — `shell/bin/torvus` -> `~/.local/bin/torvus`.
+  Use `just link-bin` to install only launchers. The fish config adds
+  `~/.local/bin` to PATH; other shells must include it too.
 - **fish** is layered in *additively* — `conf.d/evalir.fish` (personal
   config: PATHs, prompt, sources the function bundle) and
   `functions/evalir.fish`. Your machine's own `config.fish` is never touched.
@@ -94,6 +97,8 @@ survives a dropped connection. The fish bundle carries the helpers:
 | `sls`       | list active tmux + zellij sessions |
 | `normandy` / `nmd` | mosh to the Asahi box; `normandy <session>` lands straight in `s <session>` |
 | `swanbots` / `swb` | same, for the Debian GPU box |
+| `torvus` | Mosh to Torvus with immediate local typing prediction |
+| `torvus --safe` | ordinary SSH to Torvus for hidden passwords/tokens |
 
 `s` uses tmux **session groups**: the windows/panes are shared, but each client
 attaches through its own throwaway session, so window selection and size stay
@@ -101,6 +106,34 @@ independent across your laptop and phone.
 
 The `swanbots` helper doesn't specify a login user — set `User` for that host in
 `~/.ssh/config` if it differs from your local username.
+
+### Torvus on another machine
+
+With this repo cloned, Mosh installed, and `ssh torvus` working:
+
+```sh
+cd ~/dotfiles
+just link-bin             # or: bash install/link.sh --bin
+torvus                    # immediate local typing via Mosh
+torvus --safe             # ordinary SSH
+```
+
+Full `just setup` installs Mosh and links the launcher too. The launcher works
+on macOS and Linux; its symlink follows future `git pull` updates. Existing
+launchers are backed up, and rerunning the installer leaves correct links alone.
+
+SSH credentials and agent settings remain machine-specific. For a new machine,
+configure the `Host torvus` alias for `evalir@37.27.118.27` using your authorized
+SSH key/agent. The [Torvus SSH reference](https://github.com/Pendrana-Systems/torvus/blob/main/mac-ssh.conf)
+shows the Mac/1Password setup; [keys/login.pub](https://github.com/Pendrana-Systems/torvus/blob/main/keys/login.pub)
+is the public identity selector. Configure the agent socket for your OS rather
+than copying a private key into this repo.
+
+The default uses `mosh --predict=experimental`: typing appears locally before
+the server confirms it. It can briefly show characters even at hidden-input
+prompts, so use `torvus --safe` for passwords/tokens. A reminder is printed on
+each normal connection. Command output and completion still wait on the network.
+`ssh torvus` and other Mosh connections are unchanged; `torvus --help` shows usage.
 
 ## Nix-managed boxes
 

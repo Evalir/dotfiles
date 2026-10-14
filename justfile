@@ -9,6 +9,10 @@ bootstrap:
 link:
     bash ./install/link.sh
 
+# Install only command launchers into ~/.local/bin, with backups. Re-runnable
+link-bin:
+    bash ./install/link.sh --bin
+
 # Fuller dev environment without Nix: core CLI, language toolchains, native build deps.
 # Optionally scope it: `just devenv cli`, `just devenv "lang build"`. Re-runnable
 devenv groups="":
