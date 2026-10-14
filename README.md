@@ -49,6 +49,31 @@ Anything already at a target path is moved aside to a timestamped
 targets already pointing at the repo are left alone. Because it's symlinks, a
 later `git pull` updates every linked machine.
 
+## Portable profile contract
+
+`config/profiles.json` declares headless and desktop components once. Inspect the
+resolved links and prerequisite capabilities without changing any files:
+
+```sh
+python3 install/profile.py headless
+python3 install/profile.py desktop
+```
+
+Headless selects fish, tmux, Neovim, launchers and individual personal agent skills.
+Desktop also selects Rex and any published shared Ghostty configuration. Shared
+Starship configuration is included when published. Missing optional configuration
+is reported explicitly. Required/optional binaries and minimum versions are listed;
+`executable` reports PATH availability, while `version_checked: false` means this
+report does not certify installed versions or overall readiness. It never installs
+packages, reads credentials or changes HOME. The existing linker is unchanged in
+this preparatory layer; ownership-aware profile installation follows separately.
+
+Check the profile contract with:
+
+```sh
+python3 -m unittest discover -s install/tests -p 'test_profile.py'
+```
+
 ## Dev environment (without Nix)
 
 `just devenv` installs the fuller toolset — the portable equivalent of what

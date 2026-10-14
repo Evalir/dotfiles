@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "profiles": {
+    "headless": ["launchers", "fish", "tmux", "nvim", "skills", "prompt"],
+    "desktop": ["launchers", "fish", "tmux", "nvim", "skills", "prompt", "rex", "ghostty"],
+    "bin": ["launchers"],
+    "rex": ["rex"]
+  },
+  "components": {
+    "launchers": {
+      "links": [["shell/bin/torvus", "home", ".local/bin/torvus"], ["shell/bin/torvus-ssh.py", "home", ".local/bin/torvus-ssh.py"]],
+      "required": [{"command": "mosh"}, {"command": "ssh"}, {"command": "uv"}]
+    },
+    "fish": {
+      "links": [["shell/fish/conf.d/evalir.fish", "config", "fish/conf.d/evalir.fish"], ["shell/fish/functions/evalir.fish", "config", "fish/functions/evalir.fish"]],
+      "required": [{"command": "fish"}],
+      "optional": [{"command": "eza"}, {"command": "zellij"}]
+    },
+    "tmux": {
+      "links": [["shell/tmux/tmux.conf", "config", "tmux/tmux.conf"]],
+      "required": [{"command": "tmux", "minimum": "3.1"}]
+    },
+    "nvim": {
+      "links": [["editors/nvim", "config", "nvim"]],
+      "required": [{"command": "nvim", "minimum": "0.12"}, {"command": "tree-sitter", "minimum": "0.26.1"}, {"command": "git"}]
+    },
+    "skills": {"skills": "agents/skills"},
+    "prompt": {
+      "links": [["shell/starship.toml", "config", "starship.toml"]],
+      "optional_source": true,
+      "optional": [{"command": "starship"}]
+    },
+    "rex": {
+      "links": [["shell/rex/init.lua", "config", "rex/init.lua"]],
+      "optional": [{"command": "rex"}]
+    },
+    "ghostty": {
+      "links": [["shell/ghostty/shared.conf", "config", "ghostty/shared.conf"]],
+      "optional_source": true,
+      "optional": [{"command": "ghostty"}]
+    }
+  }
+}
