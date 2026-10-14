@@ -56,3 +56,9 @@ if status is-interactive
         starship init fish | source
     end
 end
+
+# Optional machine-local overrides, outside the shared files. config.fish still
+# runs afterward; Torvus can keep its separate conf.d/zz-torvus.fish as well.
+if test -f $__fish_config_dir/evalir.local.fish
+    source $__fish_config_dir/evalir.local.fish
+end

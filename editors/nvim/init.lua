@@ -36,3 +36,13 @@ require('lazy').setup('plugins', {
 
 -- The default theme; alternatives are listed in lua/plugins/themes.lua.
 vim.cmd.colorscheme 'github_dark_high_contrast'
+
+-- Optional machine-local overrides outside the symlinked Neovim directory.
+local config_home = vim.env.XDG_CONFIG_HOME
+if not config_home or config_home == '' then
+  config_home = vim.env.HOME .. '/.config'
+end
+local overrides = config_home .. '/dotfiles/nvim.lua'
+if vim.fn.filereadable(overrides) == 1 then
+  dofile(overrides)
+end
