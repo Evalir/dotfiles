@@ -3,3 +3,6 @@ doom
 alacritty
 zsh/rpc.sh
 
+
+__pycache__/
+*.pyc
