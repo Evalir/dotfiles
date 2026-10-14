@@ -4,8 +4,9 @@ set -eu
 
 usage() {
   printf '%s\n' \
-    'Usage: torvus [--safe | --help]' \
+    'Usage: torvus [--ssh | --safe | --help]' \
     '  torvus         Mosh with immediate local typing prediction.' \
+    '  torvus --ssh   SSH with local shell-line editing (requires uv).' \
     '  torvus --safe  Ordinary SSH for hidden passwords and tokens.'
 }
 
@@ -20,6 +21,13 @@ case ${1-} in
     exec mosh --predict=experimental torvus
     ;;
   --safe) exec ssh torvus ;;
+  --ssh)
+    if ! command -v uv >/dev/null 2>&1; then
+      printf '%s\n' 'Install uv for local editing: https://docs.astral.sh/uv/getting-started/installation/' >&2
+      exit 127
+    fi
+    exec uv run --script "$(dirname "$0")/torvus-ssh.py"
+    ;;
   --help|-h) usage ;;
   *) usage >&2; exit 2 ;;
 esac

@@ -98,6 +98,7 @@ survives a dropped connection. The fish bundle carries the helpers:
 | `normandy` / `nmd` | mosh to the Asahi box; `normandy <session>` lands straight in `s <session>` |
 | `swanbots` / `swb` | same, for the Debian GPU box |
 | `torvus` | Mosh to Torvus with immediate local typing prediction |
+| `torvus --ssh` | SSH with local shell-line editing; normal SSH input inside programs |
 | `torvus --safe` | ordinary SSH to Torvus for hidden passwords/tokens |
 
 `s` uses tmux **session groups**: the windows/panes are shared, but each client
@@ -115,10 +116,11 @@ With this repo cloned, Mosh installed, and `ssh torvus` working:
 cd ~/dotfiles
 just link-bin             # or: bash install/link.sh --bin
 torvus                    # immediate local typing via Mosh
+torvus --ssh              # local line editing over SSH (requires uv)
 torvus --safe             # ordinary SSH
 ```
 
-Full `just setup` installs Mosh and links the launcher too. The launcher works
+Full `just setup` installs Mosh/uv and links the launcher and its helper. The launcher works
 on macOS and Linux; its symlink follows future `git pull` updates. Existing
 launchers are backed up, and rerunning the installer leaves correct links alone.
 
@@ -134,6 +136,25 @@ the server confirms it. It can briefly show characters even at hidden-input
 prompts, so use `torvus --safe` for passwords/tokens. A reminder is printed on
 each normal connection. Command output and completion still wait on the network.
 `ssh torvus` and other Mosh connections are unchanged; `torvus --help` shows usage.
+
+`torvus --ssh` uses [uv](https://docs.astral.sh/uv/getting-started/installation/)
+to cache Python and the pinned `prompt-toolkit` dependency on first use. Install
+them on another Mac with `brew install mosh uv`, then run `just link-bin`.
+The remote needs fish (already installed on Torvus). Its prompt hooks apply only
+to this connection; no server configuration is changed.
+
+At the `[local]>` prompt, typing, cursor movement, and session history are local.
+Enter sends the command and switches to ordinary SSH input until fish returns
+to its prompt. Neovim, coding agents, and password prompts receive normal remote
+input. Tab hands the current line to fish for completion; Ctrl-] hands it over
+for remote editing. Local editing resumes after that command finishes. Local
+history lives only in memory; fish still records executed commands normally.
+Inside tmux or another nested shell, input remains remote. Output and remote
+completion still incur network latency. The helper passes terminal titles and
+OSC status sequences through; Rex icon behavior still depends on Rex.
+
+Verify the helper with `uv run shell/tests/test_torvus_ssh.py`; add `--live` for
+PTY checks against Torvus (including a dummy hidden-input prompt and Neovim).
 
 ## Nix-managed boxes
 

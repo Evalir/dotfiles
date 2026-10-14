@@ -36,6 +36,7 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 # then pointed at it below, so one edit in the repo reaches all of them.
 MAPPINGS=(
     "shell/bin/torvus|$HOME/.local/bin/torvus"
+    "shell/bin/torvus-ssh.py|$HOME/.local/bin/torvus-ssh.py"
 )
 if [ "$BIN_ONLY" = false ]; then
 MAPPINGS+=(
