@@ -9,15 +9,15 @@
 #
 # Usage:  bash install/link.sh          # from anywhere; resolves the repo itself
 #         bash install/link.sh --bin    # only command launchers in ~/.local/bin
+#         bash install/link.sh --rex    # only Rex terminal configuration
 #
 set -euo pipefail
 
-if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [ "$1" != --bin ]; }; then
-    printf 'Usage: bash install/link.sh [--bin]\n' >&2
+if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [ "$1" != --bin ] && [ "$1" != --rex ]; }; then
+    printf 'Usage: bash install/link.sh [--bin | --rex]\n' >&2
     exit 2
 fi
-BIN_ONLY=false
-if [ "${1:-}" = --bin ]; then BIN_ONLY=true; fi
+MODE="${1:-all}"
 
 # Repo root = parent of this script's dir, resolved to an absolute path.
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -34,11 +34,17 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 # `programs.tmux` from home-manager first so the two don't fight over it.
 # agents/skills is the harness-neutral home of the agent skills; each harness is
 # then pointed at it below, so one edit in the repo reaches all of them.
-MAPPINGS=(
+MAPPINGS=()
+if [ "$MODE" != --rex ]; then
+MAPPINGS+=(
     "shell/bin/torvus|$HOME/.local/bin/torvus"
     "shell/bin/torvus-ssh.py|$HOME/.local/bin/torvus-ssh.py"
 )
-if [ "$BIN_ONLY" = false ]; then
+fi
+if [ "$MODE" != --bin ]; then
+MAPPINGS+=("shell/rex/init.lua|$CONFIG_HOME/rex/init.lua")
+fi
+if [ "$MODE" = all ]; then
 MAPPINGS+=(
     "shell/fish/conf.d/evalir.fish|$CONFIG_HOME/fish/conf.d/evalir.fish"
     "shell/fish/functions/evalir.fish|$CONFIG_HOME/fish/functions/evalir.fish"
@@ -87,8 +93,12 @@ for m in "${MAPPINGS[@]}"; do
     link_one "${m%%|*}" "${m#*|}"
 done
 
-if [ "$BIN_ONLY" = true ]; then
+if [ "$MODE" = --bin ]; then
     echo 'Done. Ensure ~/.local/bin is on PATH (the personal fish config already adds it).'
+    exit 0
+fi
+if [ "$MODE" = --rex ]; then
+    echo 'Done. Run rex config reload to apply the terminal configuration.'
     exit 0
 fi
 

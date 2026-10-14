@@ -13,6 +13,10 @@ link:
 link-bin:
     bash ./install/link.sh --bin
 
+# Install only Rex terminal configuration, with backups. Re-runnable
+link-rex:
+    bash ./install/link.sh --rex
+
 # Fuller dev environment without Nix: core CLI, language toolchains, native build deps.
 # Optionally scope it: `just devenv cli`, `just devenv "lang build"`. Re-runnable
 devenv groups="":

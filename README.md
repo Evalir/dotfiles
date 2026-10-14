@@ -156,6 +156,14 @@ OSC status sequences through; Rex icon behavior still depends on Rex.
 Verify the helper with `uv run shell/tests/test_torvus_ssh.py`; add `--live` for
 PTY checks against Torvus (including a dummy hidden-input prompt and Neovim).
 
+For **Shift+Enter in Codex over Mosh in Rex**, run `just link-rex` (or
+`bash install/link.sh --rex`), then `rex config reload`. Full `just link` also
+installs this configuration. `shell/rex/init.lua` sends explicit CSI-u
+Shift+Enter only in panes whose title starts with `[mosh]`; keep Mosh's default
+title prefix enabled. Local and SSH panes retain native key handling. This was
+verified with Rex Beta build 1069, Mosh 1.4.0, and Codex 0.162.1. Rex config
+changes need another `rex config reload` after pulling updates.
+
 ## Nix-managed boxes
 
 These configs are the single source of truth, including on boxes that otherwise
