@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 import subprocess
+import stat
 
 from ownership import save
 
@@ -26,10 +27,20 @@ def run(path, data):
     data['integration'] = {'healthy': False, 'status': 'running', 'revision': data['applied']}
     save(path, data)
     try:
-        result = subprocess.run(data['hook'], capture_output=True, text=True, timeout=900)
+        descriptors = ()
+        inherited = os.environ.get('TORVUS_DOTFILES_LOCK_FD')
+        if inherited is not None:
+            fd = int(inherited)
+            actual, expected = os.fstat(fd), (path.parent / 'lock').lstat()
+            if (fd < 3 or not stat.S_ISREG(actual.st_mode) or actual.st_uid != os.getuid()
+                    or (actual.st_dev, actual.st_ino) != (expected.st_dev, expected.st_ino)):
+                raise ValueError('Inherited lock does not match the integration state')
+            descriptors = (fd,)
+        result = subprocess.run(data['hook'], capture_output=True, text=True, timeout=900,
+                                pass_fds=descriptors)
         # Never persist hook output; it may contain machine-local information.
         data['integration'].update(healthy=result.returncode == 0, status='complete', exit_code=result.returncode)
-    except (OSError, subprocess.TimeoutExpired) as error:
+    except (OSError, ValueError, subprocess.TimeoutExpired) as error:
         data['integration'].update(status='failed', error=type(error).__name__)
     save(path, data)
 

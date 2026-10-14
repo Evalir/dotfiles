@@ -1,5 +1,6 @@
 """Exercise the public staged launcher against a disposable published remote."""
 import json
+import fcntl
 import os
 from pathlib import Path
 import shutil
@@ -159,3 +160,24 @@ class CliWorkflow(unittest.TestCase):
         self.assertIn('changed while staging', json.loads(result.stderr)['errors'][0])
         self.assertEqual((self.directory / 'state.json').read_bytes(), before)
         self.assertTrue(self.cli('reconcile')['healthy'])
+
+    def test_inherited_lock_reaches_hook_and_nested_readonly_launcher(self):
+        self.tool()
+        self.cli('adopt')
+        hook = self.base / 'hook'
+        hook.write_text(f'#!{sys.executable}\nimport os, subprocess, sys\n'
+                        'fd = int(os.environ["TORVUS_DOTFILES_LOCK_FD"])\nos.fstat(fd)\n'
+                        f'subprocess.run([sys.executable, {str(self.root / "shell/bin/dotfiles")!r}, '
+                        '"doctor", "--scope", "profile", "--json"], pass_fds=(fd,), check=True)\n')
+        hook.chmod(0o755)
+        self.cli('register-hook', '--hook', str(hook), code=1)
+        fd = os.open(self.directory / 'lock', os.O_RDWR)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            result = subprocess.run([sys.executable, str(self.root / 'shell/bin/dotfiles'),
+                                     'retry-hook', '--json'], pass_fds=(fd,), capture_output=True, text=True,
+                                    env={**self.env, 'TORVUS_DOTFILES_LOCK_FD': str(fd)})
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertTrue(json.loads(result.stdout)['integration']['healthy'])
+        finally:
+            os.close(fd)
