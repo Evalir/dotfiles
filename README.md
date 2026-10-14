@@ -263,7 +263,8 @@ not fetch. After a manual `git pull --ff-only`, run it again.
 
 `dotfiles sync --dry-run` previews origin/master. `dotfiles sync` fetches once and
 applies that exact published SHA; `--revision FULL_SHA` selects an older published
-revision. Dirty checkouts, feature branches, local-only commits, foreign links and
+revision in detached HEAD, preserving the local master branch. Dirty checkouts,
+feature branches, local-only commits, foreign links and
 running Neovim instances block application. Nothing is stashed or reset. Existing
 shells and jobs survive; reopen editors/new shells to load configuration changes.
 Linked files change immediately when Git checks them out; activation is not atomic.
@@ -280,7 +281,8 @@ A host can opt into one local post-apply command with
 `dotfiles register-hook --hook /absolute/program arg1 arg2`. Arguments are passed
 directly, without a shell. The registration stays in local state. Shared profile
 health and hook health are separate: a failed hook leaves the successfully applied
-SHA intact, and `dotfiles retry-hook` retries only the integration. Hooks that check
+SHA intact, and `dotfiles retry-hook` retries only the integration. Adoption marks
+an existing hook pending, including same-revision repairs, without running it. Hooks that check
 the profile must use `doctor --scope profile --json` to avoid recursion. Ordinary
 `doctor` includes the recorded integration result, but never runs the hook.
 

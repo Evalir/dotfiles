@@ -63,6 +63,8 @@ def lock_hash(root):
 
 def begin(path, data, revision):
     data.update(attempted=revision, phase='applying', error=None)
+    if data.get('hook'):
+        data['integration'] = {'healthy': False, 'status': 'pending', 'revision': revision}
     save(path, data)
 
 
