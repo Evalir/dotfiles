@@ -6,9 +6,22 @@ import subprocess
 import sys
 import tempfile
 
+sys.dont_write_bytecode = True
 root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(root / 'install'))
+import remote
+
+remote_exit = remote.dispatch(sys.argv[1:])
+if remote_exit is not None:
+    sys.exit(remote_exit)
+try:
+    arguments = remote.receive(sys.argv[1:])
+except (OSError, ValueError) as error:
+    import json
+    print(json.dumps({'version': 1, 'healthy': False, 'errors': [str(error)]}))
+    sys.exit(1)
 with tempfile.TemporaryDirectory(prefix='dotfiles-helper-') as staging:
     for source in (root / 'install').glob('*.py'):
         shutil.copy2(source, Path(staging) / source.name)
     sys.exit(subprocess.call([sys.executable, str(Path(staging) / 'sync_cli.py'),
-                              '--root', str(root), *sys.argv[1:]]))
+                              '--root', str(root), *arguments]))

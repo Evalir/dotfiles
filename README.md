@@ -283,3 +283,30 @@ health and hook health are separate: a failed hook leaves the successfully appli
 SHA intact, and `dotfiles retry-hook` retries only the integration. Hooks that check
 the profile must use `doctor --scope profile --json` to avoid recursion. Ordinary
 `doctor` includes the recorded integration result, but never runs the hook.
+
+### Sync another host
+
+Publish changes through the existing manual edit, commit and push workflow, then:
+
+```sh
+dotfiles sync --host torvus --dry-run
+dotfiles sync --host torvus
+dotfiles status --host torvus --json
+dotfiles doctor --host torvus
+```
+
+`--host` operates only on the SSH host alias. It does not sync the caller first,
+read its registration, or transfer unpublished edits; a dirty laptop is fine.
+The remote resolves its published branch once and uses its own selected profile.
+For intentional parity, run `dotfiles sync --revision FULL_SHA` separately on each
+machine (adding `--host torvus` for the remote). `reconcile --host torvus` repairs
+the revision already checked out remotely without fetching.
+
+The host must already expose `~/.local/bin/dotfiles` and have completed
+`dotfiles adopt --profile headless`. This transport never bootstraps a host,
+forwards an agent, copies HOME, or changes host-key policy. Requests are JSON on
+stdin to a fixed entry point. Remote reports retain profile, attempted/applied
+revision, missing capabilities and integration health; `--json` includes those
+fields directly. A disconnect means the apply outcome is unknown: check remote
+status before retrying. Existing jobs are left running; editor apply still asks
+you to close Neovim.
