@@ -121,7 +121,8 @@ def operate(root, args, roots, directory):
         try:
             if revision != current:
                 branch = state.git(root, 'symbolic-ref', '--quiet', '--short', 'HEAD', check=False).stdout.strip()
-                if branch == 'master' and args.command != 'rollback':
+                forward = state.git(root, 'merge-base', '--is-ancestor', current, revision, check=False).returncode == 0
+                if branch == 'master' and args.command != 'rollback' and forward:
                     state.git(root, 'merge', '--ff-only', revision)
                 else:
                     state.git(root, 'checkout', '--detach', revision)
@@ -141,6 +142,14 @@ def operate(root, args, roots, directory):
             save(path, data)
             raise
     return {**data, 'requirements': report['requirements'], 'healthy': integration.overall(data)}
+
+
+def staged_helpers_match(root):
+    """A concurrent checkout may have changed files while the launcher copied them."""
+    staged = {path.name: path.read_bytes() for path in Path(__file__).parent.glob('*.py')}
+    current = {path.name: path.read_bytes() for path in (root / 'install').glob('*.py')}
+    if staged != current:
+        raise ValueError('Checkout changed while staging helpers; retry with the current launcher')
 
 
 def main(argv=None):
@@ -167,6 +176,7 @@ def main(argv=None):
         result = operate(root, args, roots, directory)
     else:
         with locked(directory, roots.values()):
+            staged_helpers_match(root)
             result = operate(root, args, roots, directory)
     if args.json:
         print(json.dumps(result, indent=2))
