@@ -41,12 +41,14 @@ Debian, `zellij` on any Debian) is reported rather than aborting the run.
   harness's skills directory. Unrelated skills, `.system` directories, credentials
   and settings stay untouched. Run the linker again after installing a harness.
   Repo-vendored skills remain a separate `install/agent-skills.sh` operation.
+- **Pi models** — `agents/pi/models.json` -> `~/.pi/agent/models.json` on both
+  profiles. See [Pi and Swanbots](agents/pi/README.md) for installation and use.
 
 ## Portable profiles and ownership
 
 The linker requires Python 3.9+ and never installs packages. `config/profiles.json`
 declares the shared components once. `headless` activates fish, tmux, Neovim,
-portable launchers and personal agent skills. `desktop` adds Rex and any published
+portable launchers, personal agent skills and Pi models. `desktop` adds Rex and any published
 shared Ghostty config. Shared Starship config is linked when published; currently
 absent optional sources are reported. With no flags, the profile is `desktop`.
 `--bin` and `--rex` still select only their respective mappings.

@@ -31,7 +31,7 @@ class Profiles(unittest.TestCase):
     def test_headless_has_portable_components_without_gui_or_home_writes(self):
         result = self.resolve()
         self.assertEqual({x['component'] for x in result['links']},
-                         {'fish', 'tmux', 'nvim', 'skills', 'launchers'})
+                         {'fish', 'tmux', 'nvim', 'skills', 'launchers', 'pi'})
         self.assertFalse(self.home.exists())
         self.assertIn('prompt', {x['component'] for x in result['skipped']})
         self.assertNotIn('rex', {x['component'] for x in result['links']})

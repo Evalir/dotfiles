@@ -50,7 +50,7 @@ at `~/dev/evalir/plans`. Nothing else is ever the plans repo.
 - **Inside the plans repo** — a cloud session opened on `Evalir/plans`, or a machine
   without the code checked out: paths are `<repo>/…`, and every `gh` call takes
   `-R <owner/repo>` from the plan's `repo:` field. `plan-status` and `plan-sync` work here
-  in full. `plan-write` and `plan-dispatch` need the code; run them from the code repo.
+  in full. `plan-write` needs the code; run it from the code repo.
 
 ## Filename
 
@@ -99,8 +99,8 @@ The follow-ups you are deliberately leaving. Keeps scope from creeping.
 Appended as work happens. Dates, PR numbers, what a review found.
 ```
 
-The body sections are the PR body. `plan-dispatch` hands them over almost verbatim —
-and for a cloud agent, the body *is* the task, so it must stand on its own.
+The body sections are the plan, not the PR body: a PR body follows the repo's `.github/PULL_REQUEST_TEMPLATE.md`.
+For a cloud agent, the body *is* the task, so it must stand on its own.
 
 ## Checks come from the repo
 
