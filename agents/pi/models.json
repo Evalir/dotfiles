@@ -1,0 +1,23 @@
+{
+  "providers": {
+    "swanbots": {
+      "baseUrl": "http://swanbots.dzo-alpha.ts.net:8083/v1",
+      "api": "openai-completions",
+      "apiKey": "unused",
+      "models": [
+        {
+          "id": "qwen3.8-27b",
+          "name": "Qwen on Swanbots",
+          "contextWindow": 81920,
+          "maxTokens": 8192,
+          "compat": {
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": false,
+            "maxTokensField": "max_tokens"
+          }
+        }
+      ]
+    }
+  }
+}

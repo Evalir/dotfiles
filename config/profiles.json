@@ -1,8 +1,8 @@
 {
   "version": 1,
   "profiles": {
-    "headless": ["launchers", "fish", "tmux", "nvim", "skills", "prompt"],
-    "desktop": ["launchers", "fish", "tmux", "nvim", "skills", "prompt", "rex", "ghostty"],
+    "headless": ["launchers", "fish", "tmux", "nvim", "skills", "pi", "prompt"],
+    "desktop": ["launchers", "fish", "tmux", "nvim", "skills", "pi", "prompt", "rex", "ghostty"],
     "bin": ["launchers"],
     "rex": ["rex"]
   },
@@ -25,6 +25,10 @@
       "required": [{"command": "nvim", "minimum": "0.12"}, {"command": "tree-sitter", "minimum": "0.26.1"}, {"command": "git"}]
     },
     "skills": {"skills": "agents/skills"},
+    "pi": {
+      "links": [["agents/pi/models.json", "home", ".pi/agent/models.json"]],
+      "optional": [{"command": "pi"}]
+    },
     "prompt": {
       "links": [["shell/starship.toml", "config", "starship.toml"]],
       "optional_source": true,
